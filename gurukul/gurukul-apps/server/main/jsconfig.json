@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
+    "baseUrl": ".",
+    "paths": {
+      "@gurukul/shared-server/*": [
+        "../../../packages/shared/gurukul-apps/server/*"
+      ]
+    }
+  }
+}

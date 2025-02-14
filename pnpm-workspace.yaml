@@ -1,0 +1,4 @@
+packages:
+  - 'packages/shared/gurukul-apps/server/**'
+  - 'gurukul/gurukul-apps/client/**'
+  - 'gurukul/gurukul-apps/server/**'

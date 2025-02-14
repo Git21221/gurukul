@@ -1,0 +1,46 @@
+{
+  "private": true,
+  "name": "gurukul-app",
+  "version": "1.0.0",
+  "dependencies": {
+    "mongoose": "^8.10.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "scripts": {
+    "dev:client:main": "pnpm --filter ./gurukul/gurukul-apps/client/main dev:client:main",
+    "dev:client:payment-main": "pnpm --filter ./gurukul/gurukul-apps/client/payment-main dev:client:payment-main",
+    "dev:client:brand": "pnpm --filter ./gurukul/gurukul-apps/client/brand dev:client:brand",
+    "dev:client:payment-brand": "pnpm --filter ./gurukul/gurukul-apps/client/payment-brand dev:client:payment-brand",
+    "dev:server:main": "pnpm --filter ./gurukul/gurukul-apps/server/main dev:server:main",
+    "dev:server:payment-main": "pnpm --filter ./gurukul/gurukul-apps/server/payment-main dev:server:payment-main",
+    "dev:server:brand": "pnpm --filter ./gurukul/gurukul-apps/server/brand dev:server:brand",
+    "dev:server:payment-brand": "pnpm --filter ./gurukul/gurukul-apps/server/payment-brand dev:server:payment-brand",
+    "build:client:main": "pnpm --filter ./gurukul/gurukul-apps/client/main build:client:main",
+    "build:client:payment-main": "pnpm --filter ./gurukul/gurukul-apps/client/payment-main build:client:payment-main",
+    "build:client:brand": "pnpm --filter ./gurukul/gurukul-apps/client/brand build:client:brand",
+    "build:client:payment-brand": "pnpm --filter ./gurukul/gurukul-apps/client/payment-brand build:client:payment-brand",
+    "build:server:main": "pnpm --filter ./gurukul/gurukul-apps/server/main build:server:main",
+    "build:server:payment-main": "pnpm --filter ./gurukul/gurukul-apps/server/payment-main build:server:payment-main",
+    "build:server:brand": "pnpm --filter ./gurukul/gurukul-apps/server/brand build:server:brand",
+    "build:server:payment-brand": "pnpm --filter ./gurukul/gurukul-apps/server/payment-brand build:server:payment-brand",
+    "preview:client:main": "pnpm --filter ./gurukul/gurukul-apps/client/main preview:client:main",
+    "preview:client:payment-main": "pnpm --filter ./gurukul/gurukul-apps/client/payment-main preview:client:payment-main",
+    "preview:client:brand": "pnpm --filter ./gurukul/gurukul-apps/client/brand preview:client:brand",
+    "preview:client:payment-brand": "pnpm --filter ./gurukul/gurukul-apps/client/payment-brand preview:client:payment-brand",
+    "lint": "eslint .",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "vite": "^6.1.0"
+  }
+}
