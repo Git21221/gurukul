@@ -1,15 +1,7 @@
 {
   "private": true,
-  "name": "gurukul-app",
+  "name": "gurukul-fullstack-app",
   "version": "1.0.0",
-  "dependencies": {
-    "@reduxjs/toolkit": "^2.5.1",
-    "gurukul-app": "link:..\\..\\..\\..",
-    "mongoose": "^8.10.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-redux": "^9.2.0"
-  },
   "scripts": {
     "dev:client:main": "pnpm --filter ./gurukul/gurukul-apps/client/main dev:client:main",
     "dev:client:payment-main": "pnpm --filter ./gurukul/gurukul-apps/client/payment-main dev:client:payment-main",
@@ -34,6 +26,21 @@
     "lint": "eslint .",
     "test": "jest"
   },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.5.1",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "gurukul-app": "link:..\\..\\..\\..",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.13.0",
+    "mongoose": "^8.10.0",
+    "multer": "1.4.5-lts.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-redux": "^9.2.0"
+  },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "@types/react": "^19.0.8",
@@ -44,6 +51,9 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
+    "nodemon": "^3.1.9",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "vite": "^6.1.0"
   }
 }
