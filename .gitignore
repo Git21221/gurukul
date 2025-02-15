@@ -94,6 +94,10 @@ out
 # Nuxt.js build / generate output
 .nuxt
 dist
+dist-main
+dist-payment-main
+dist-brand
+dist-payment-brand
 
 # Gatsby files
 .cache/

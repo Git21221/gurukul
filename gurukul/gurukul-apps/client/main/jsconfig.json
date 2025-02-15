@@ -4,5 +4,10 @@
     "target": "ESNext",
     "moduleResolution": "Node",
     "baseUrl": ".",
+    "paths": {
+      "@gurukul/shared-client/*": [
+        "../../../packages/shared/gurukul-apps/client/*"
+      ]
+    }
   }
 }

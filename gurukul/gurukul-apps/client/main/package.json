@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev:client:main": "vite --host",
-    "build": "vite build",
+    "build:client:main": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview --host"
+    "preview:client:main": "vite preview --host"
+  },
+  "dependencies": {
+    "@gurukul/shared-client": "workspace:*"
   }
 }

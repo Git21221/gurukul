@@ -13,17 +13,17 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: path.resolve(__dirname, "../../../build-client/dist-main"),
+    outDir: path.resolve(__dirname, "../../../build-client/dist-payment-main"),
     sourcemap: true,
     minify: "esbuild",
     emptyOutDir: true,
   },
   server: {
-    port: 3000,
+    port: 3001,
     open: true,
   },
   preview: {
-    port: 4000,
+    port: 4001,
     open: true,
   },
 });

@@ -1,0 +1,16 @@
+{
+  "name": "payment-brand",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Saikat Das",
+  "license": "ISC",
+  "type": "module",
+  "description": "Gurukul's Brand website payment processing module",
+  "dependencies": {
+    "@gurukul/shared-server": "workspace:^"
+  }
+}
