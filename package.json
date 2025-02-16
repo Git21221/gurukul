@@ -2,6 +2,8 @@
   "private": true,
   "name": "gurukul-fullstack-app",
   "version": "1.0.0",
+  "author": "Saikat Das",
+  "description": "A fullstack application for Gurukul project.",
   "scripts": {
     "dev:client:main": "pnpm --filter ./gurukul/gurukul-apps/client/main dev:client:main",
     "dev:client:payment-main": "pnpm --filter ./gurukul/gurukul-apps/client/payment-main dev:client:payment-main",
