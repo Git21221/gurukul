@@ -33,17 +33,13 @@ const educatorSchema = new mongoose.Schema(
     refered_by_founder: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Founder",
+      required: true,
     },
     belongs_to_brand: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
+      required: true,
     },
-    belongs_to_courses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
-      },
-    ],
   },
   {
     timestamps: true,

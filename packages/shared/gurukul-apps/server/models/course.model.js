@@ -68,6 +68,12 @@ const courseSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Educator",
     },
+    mentors_assigned: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Mentor",
+      },
+    ],
   },
   {
     timestamps: true,
