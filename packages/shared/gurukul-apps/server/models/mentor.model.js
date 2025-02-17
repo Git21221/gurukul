@@ -30,9 +30,9 @@ const mentorSchema = new mongoose.Schema(
       type: [String],
       required: false,
     },
-    refered_by_founder: {
+    referral: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Founder",
+      ref: "Referral",
     },
     belongs_to_brand: {
       type: mongoose.Schema.Types.ObjectId,

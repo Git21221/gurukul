@@ -30,9 +30,9 @@ const educatorSchema = new mongoose.Schema(
       type: [String],
       required: false,
     },
-    refered_by_founder: {
+    referral: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Founder",
+      ref: "Referral",
       required: true,
     },
     belongs_to_brand: {
