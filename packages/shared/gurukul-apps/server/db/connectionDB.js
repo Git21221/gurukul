@@ -1,13 +1,5 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import env from "../../../../../env.js";
-// import { join, dirname } from "path";
-// import dotenv from "dotenv";
-// import { fileURLToPath } from "url";
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
-
-// dotenv.config({ path: join(__dirname, "../../../../../.env") });
 
 const URI =
   env.ENVIRONMENT === "development"
@@ -27,8 +19,10 @@ const client = new MongoClient(URI, {
 export const connectionDB = async () => {
   try {
     await client.connect();
-    // await client.db(DB_NAME).command({ ping: 1 });
-    console.log("Successfully connected to the database");
+    const pi = await client.db().admin().command({ ping: 1 });
+    if (pi.ok) {
+      console.log("Successfully connected to the database");
+    }
   } catch (error) {
     console.log("Error connecting to the database", error);
   } finally {
