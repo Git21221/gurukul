@@ -6,9 +6,13 @@ const PORT = env.MAIN_SERVER_PORT || 8000;
 
 connectionDB()
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+    try {
+      app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+      });
+    } catch (error) {
+      console.log("Error in starting the server", error);
+    }
   })
   .catch((err) => {
     console.error("Database connection failed:", err);
