@@ -11,7 +11,7 @@ export const deployBrand = async ({ brandName, brandcolor, brandLogo }) => {
     "/js projects/projects/gurukul/",
     brandName
   );
-  const brandingFile = path.join(tempDir, "public", "branding.json");
+  const brandingFile = path.join(tempDir, "gurukul/gurukul-apps/client/brand-app/brand/public", "branding.json");
   const s3Bucket = "gurukul-brand-website";
   const s3Folder = `${brandName}`;
 
@@ -24,11 +24,11 @@ export const deployBrand = async ({ brandName, brandcolor, brandLogo }) => {
     execSync(`git clone ${REPO_URL} "${tempDir}"`, { stdio: "inherit" });
 
     console.log("Ensuring public directory exists...");
-    fs.ensureDirSync(path.join(tempDir, "public")); // Create public/ if missing
+    fs.ensureDirSync(path.dirname(tempDir)); // ensure it's created
 
     console.log("Creating branding.json...");
     const brandingData = { brandName, brandLogo, brandcolor };
-    fs.writeFileSync(brandingFile, JSON.stringify(brandingData, null, 2));
+    fs.writeFileSync(brandingFile, JSON.stringify(brandingData, 2, null));
 
     console.log("Installing dependencies...");
     execSync("npm install", { cwd: tempDir, stdio: "inherit" });
