@@ -19,9 +19,9 @@ function App() {
   }, [setBranding]);
   return (
     <>
-      <p>our logo {branding?.logo}</p>
-      <h1 style={{ color: branding?.color }}>
-        Welcome to our brand's official website. {branding?.name}
+      <p>our logo {branding?.brandLogo}</p>
+      <h1 style={{ color: branding?.brandColor }}>
+        Welcome to our brand's official website. {branding?.brandName}
       </h1>
       <div className="content">
         <button onClick={() => alert("Button Clicked!")}>Click Me</button>
