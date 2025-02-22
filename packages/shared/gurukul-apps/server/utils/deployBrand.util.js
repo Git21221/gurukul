@@ -8,8 +8,7 @@ const s3 = new AWS.S3();
 
 export const deployBrand = async ({ brandName, brandcolor, brandLogo }) => {
   const tempDir = path.resolve(
-    process.cwd(),
-    "../../client/brand-app/brand",
+    "/js projects/projects/gurukul/",
     brandName
   );
   const brandingFile = path.join(tempDir, "public", "branding.json");
@@ -39,7 +38,7 @@ export const deployBrand = async ({ brandName, brandcolor, brandLogo }) => {
 
     console.log("Uploading to S3...");
     execSync(
-      `aws s3 sync ${tempDir}/gurukul/build-client/dist-brand/ s3://${s3Bucket}/${s3Folder}/ --acl public-read`,
+      `aws s3 sync "E:/js projects/projects/gurukul/saikat/gurukul/build-client/dist-brand" "s3://${s3Bucket}/${s3Folder}"`,
       { stdio: "inherit" }
     );
 
