@@ -4,6 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import { founderRoutes } from './routes/founder.route.js';
+import { brandRouter } from './routes/brand.route.js';
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.use(cors({
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use("/api/v1/founder", founderRoutes);
+app.use("/api/v1/brand", brandRouter);
 
 export { app };

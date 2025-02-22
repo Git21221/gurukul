@@ -25,6 +25,7 @@ import {
   refreshAccessTokenForEducator,
   refreshAccessTokenForMentor,
 } from "./utils/refreshAccessToken.util.js";
+import { deployBrand } from "./utils/deployBrand.util.js";
 
 export {
   Brand,
@@ -45,4 +46,5 @@ export {
   refreshAccessTokenForFounder,
   refreshAccessTokenForEducator,
   refreshAccessTokenForMentor,
+  deployBrand,
 };
