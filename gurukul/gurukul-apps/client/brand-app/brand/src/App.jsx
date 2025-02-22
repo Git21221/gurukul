@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
@@ -8,11 +6,17 @@ function App() {
   const [branding, setBranding] = useState(null);
 
   useEffect(() => {
-    fetch("/branding.json")
-      .then((response) => response.json())
-      .then((data) => setBranding(data))
-      .catch((error) => console.error("Error loading branding:", error));
-  }, []);
+        // Extract brand name dynamically from URL
+        const brandFolder = window.location.pathname.split("/")[1] || "default";
+    
+        // Construct full URL to branding.json
+        const brandingUrl = `/${brandFolder}/branding.json`;
+    
+        fetch(brandingUrl)
+          .then((response) => response.json())
+          .then((data) => setBranding(data))
+          .catch((error) => console.error("Error loading branding:", error));
+      }, []);
   return (
     <>
       <p>our logo {branding?.logo}</p>
