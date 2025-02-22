@@ -14,7 +14,7 @@ export const deployBrand = async ({ brandName, brandcolor, brandLogo }) => {
   );
   const brandingFile = path.join(tempDir, "public", "branding.json");
   const s3Bucket = "gurukul-brand-website";
-  const s3Folder = `${brandName}/`;
+  const s3Folder = `${brandName}`;
 
   try {
     console.log("Creating temporary directory...");
@@ -39,7 +39,7 @@ export const deployBrand = async ({ brandName, brandcolor, brandLogo }) => {
 
     console.log("Uploading to S3...");
     execSync(
-      `aws s3 sync ${tempDir}/dist/ s3://${s3Bucket}/${s3Folder}/ --acl public-read`,
+      `aws s3 sync ${tempDir}/gurukul/build-client/dist-brand/ s3://${s3Bucket}/${s3Folder}/ --acl public-read`,
       { stdio: "inherit" }
     );
 
