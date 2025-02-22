@@ -16,7 +16,7 @@ function App() {
       .then((response) => response.json())
       .then((data) => setBranding(data))
       .catch((error) => console.error("Error loading branding:", error));
-  }, [branding]);
+  }, [setBranding]);
   return (
     <>
       <p>our logo {branding?.logo}</p>
