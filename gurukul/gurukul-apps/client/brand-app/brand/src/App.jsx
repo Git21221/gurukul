@@ -10,7 +10,7 @@ function App() {
     const brandFolder = window.location.pathname.split("/")[1] || "default";
 
     // Construct full URL to branding.json
-    const brandingUrl = `/${brandFolder}/branding.json`;
+    const brandingUrl = `/branding.json`;
 
     fetch(brandingUrl)
       .then((response) => response.json())

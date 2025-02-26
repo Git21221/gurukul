@@ -30,6 +30,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@aws-sdk/client-amplify": "^3.750.0",
+    "@aws-sdk/client-s3": "^3.750.0",
     "@reduxjs/toolkit": "^2.5.1",
     "aws-sdk": "^2.1692.0",
     "bcrypt": "^5.1.1",
@@ -48,7 +50,8 @@
     "multer": "1.4.5-lts.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-redux": "^9.2.0"
+    "react-redux": "^9.2.0",
+    "simple-git": "^3.27.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -64,10 +67,5 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "vite": "^6.1.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "bcrypt"
-    ]
   }
 }

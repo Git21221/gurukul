@@ -26,6 +26,7 @@ import {
   refreshAccessTokenForMentor,
 } from "./utils/refreshAccessToken.util.js";
 import { deployBrand } from "./utils/deployBrand.util.js";
+import { createSubDomain } from "./utils/createSubDomain.util.js";
 
 export {
   Brand,
@@ -47,4 +48,5 @@ export {
   refreshAccessTokenForEducator,
   refreshAccessTokenForMentor,
   deployBrand,
+  createSubDomain,
 };

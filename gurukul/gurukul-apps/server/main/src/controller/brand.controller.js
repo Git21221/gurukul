@@ -2,11 +2,12 @@ import {
   apiResponseHandler,
   asyncFuncHandler,
   Brand,
+  createSubDomain,
   deployBrand,
 } from "@gurukul/shared-server";
 
 const createBrand = asyncFuncHandler(async (req, res) => {
-  const { name, logo, color } = req?.body;
+  const { name, logo, color, founderName } = req?.body;
   // const { founderId } = req?.user;
   //sanitize data from frontend
   if (!name || !logo || !color) {
@@ -34,7 +35,7 @@ const createBrand = asyncFuncHandler(async (req, res) => {
 
   //generate brand url
 
-  deployBrand({ brandName: name, brandcolor: color, brandLogo: logo });
+  deployBrand({ brandName: name, brandColor: color, brandLogo: logo, founderName });
   //save on DB
   // const brand = await Brand.create({
   //   name,
@@ -47,5 +48,7 @@ const createBrand = asyncFuncHandler(async (req, res) => {
     .status(201)
     .json(new apiResponseHandler(201, "Brand created successfully"));
 });
+
+const getAllEducators = asyncFuncHandler(async (req, res) => {});
 
 export { createBrand };
