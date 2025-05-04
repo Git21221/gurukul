@@ -1,8 +1,19 @@
 //all shared models
+import { Article } from "./models/article.model.js";
 import { Brand } from "./models/brand.model.js";
-import { Founder } from "./models/founder.model.js";
+import { BrandView } from "./models/brandViews.model.js";
 import { Certificate } from "./models/certificate.model.js";
+import { Comment } from "./models/comment.model.js";
 import { Course } from "./models/course.model.js";
+import { Educator } from "./models/educator.model.js";
+import { Feedback } from "./models/feedback.model.js";
+import { Founder } from "./models/founder.model.js";
+import { Mentor } from "./models/mentor.model.js";
+import { Progress } from "./models/progress.model.js";
+import { Referral } from "./models/referral.model.js";
+import { User } from "./models/user.model.js";
+import { Video } from "./models/video.model.js";
+import { VideoView } from "./models/videoViews.model.js";
 
 //shared DB connection
 import { connectionDB } from "./db/connectionDB.js";
@@ -29,10 +40,21 @@ import { deployBrand } from "./utils/deployBrand.util.js";
 import { createSubDomain } from "./utils/createSubDomain.util.js";
 
 export {
+  Article,
   Brand,
-  Founder,
+  BrandView,
   Certificate,
+  Comment,
   Course,
+  Educator,
+  Feedback,
+  Founder,
+  Mentor,
+  User,
+  Progress,
+  Referral,
+  Video,
+  VideoView,
   connectionDB,
   asyncFuncHandler,
   apiResponseHandler,

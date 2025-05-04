@@ -16,7 +16,7 @@ app.use(cors({
 }))
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use("/api/v1/founder", founderRoutes);
-app.use("/api/v1/brand", brandRouter);
+app.use(`/api/${env.SERVER_API_VERSION}/main/founder`, founderRoutes);
+app.use(`/api/${env.SERVER_API_VERSION}/main/brand`, brandRouter);
 
 export { app };

@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import env from "../../../../../env.js";
 
-const FounderSchema = new mongoose.Schema(
+const founderSchema = new mongoose.Schema(
   {
     fullName: {
       type: String,
@@ -86,7 +86,7 @@ const FounderSchema = new mongoose.Schema(
   }
 );
 
-FounderSchema.pre("save", async function (next) {
+founderSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
@@ -94,13 +94,13 @@ FounderSchema.pre("save", async function (next) {
   return next();
 });
 
-FounderSchema.methods.isPasswordCorrect = async function (password) {
+founderSchema.methods.isPasswordCorrect = async function (password) {
   console.log(password, this.password);
   
   return await bcrypt.compare(password, this.password);
 };
 
-FounderSchema.methods.generateAccessToken = function () {
+founderSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -113,7 +113,7 @@ FounderSchema.methods.generateAccessToken = function () {
   );
 };
 
-FounderSchema.methods.generateRefreshToken = function () {
+founderSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -125,4 +125,17 @@ FounderSchema.methods.generateRefreshToken = function () {
   );
 };
 
-export const Founder = mongoose.model("Founder", FounderSchema);
+founderSchema.methods.hashUserRole = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      role: "founder",
+    },
+    env.JWT_USER_ROLE_SECRET,
+    {
+      expiresIn: env.JWT_USER_ROLE_SECRET_EXPIRES_IN,
+    }
+  );
+};
+
+export const Founder = mongoose.model("Founder", founderSchema);

@@ -14,3 +14,5 @@ const videoViewSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+export const VideoView = mongoose.model('VideoView', videoViewSchema);

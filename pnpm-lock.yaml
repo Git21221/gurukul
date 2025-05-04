@@ -139,8 +139,6 @@ importers:
         specifier: workspace:^
         version: link:../../../../packages/shared/gurukul-apps/client
 
-  gurukul/gurukul-apps/server: {}
-
   gurukul/gurukul-apps/server/brand-app/brand:
     dependencies:
       '@gurukul/shared-server':
