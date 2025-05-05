@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: env.CORS_ORIGIN,
   credentials: true,
-}))
+}));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(`/api/${env.SERVER_API_VERSION}/main/founder`, founderRoutes);

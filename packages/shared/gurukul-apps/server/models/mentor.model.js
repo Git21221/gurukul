@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { roles } from "../../../../../gurukul/gurukul-apps/server/config/constants.js";
 
 const mentorSchema = new mongoose.Schema(
   {
@@ -87,7 +88,7 @@ mentorSchema.methods.hashUserRole = function () {
   return jwt.sign(
     {
       _id: this._id,
-      role: "mentor",
+      role: roles.MENTOR,
     },
     env.JWT_USER_ROLE_SECRET,
     {

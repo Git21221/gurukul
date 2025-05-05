@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import env from "../../../../../env.js";
+import { roles } from "../../../../../gurukul/gurukul-apps/server/config/constants.js";
 
 const founderSchema = new mongoose.Schema(
   {
@@ -129,7 +130,7 @@ founderSchema.methods.hashUserRole = function () {
   return jwt.sign(
     {
       _id: this._id,
-      role: "founder",
+      role: roles.FOUNDER,
     },
     env.JWT_USER_ROLE_SECRET,
     {

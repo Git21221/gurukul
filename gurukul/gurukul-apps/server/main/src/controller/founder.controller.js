@@ -12,6 +12,11 @@ import {
 } from "@gurukul/shared-server";
 import jwt from "jsonwebtoken";
 import env from "../../../../../../env.js";
+import { roles, statusCodes } from "../../../config/constants.js";
+import {
+  error,
+  success,
+} from "@gurukul/shared-server/utils/formattedReturns.js";
 
 const registerFounder = asyncFuncHandler(async (req, res) => {
   const { email, fullName, password } = req?.body;
@@ -60,44 +65,35 @@ const registerFounder = asyncFuncHandler(async (req, res) => {
 });
 
 const loginFounder = asyncFuncHandler(async (req, res) => {
-  const role = req.role;
-  if (role !== "founder") {
-    return res
-      .status(403)
-      .json(
-        new apiErrorHandler(
-          403,
-          "Unauthorized access, restricted to founder only"
-        )
-      );
-  }
   //get the data from frontend
   const { email, password } = req?.body;
   console.log(email, password);
 
   //sanitize data from frontend
   if (!email || !password) {
-    return res
-      .status(400)
-      .json(new apiErrorHandler(400, "Missing required fields"));
+    return error(statusCodes.BAD_REQUEST, "Missing required fields")(res);
   }
   //check email format
   if (!checkValidEmail(email)) {
-    return res.status(400).json(new apiErrorHandler(400, "Invalid email"));
+    return error(statusCodes.BAD_REQUEST, "Invalid email format")(res);
   }
   //check for existed founder
   const founder = await Founder.findOne({ email });
   if (!founder) {
-    return res
-      .status(400)
-      .json(new apiErrorHandler(400, "Founder does not exist"));
+    return error(
+      statusCodes.NOT_FOUND,
+      "Founder not found, please register"
+    )(res);
   }
   console.log(founder);
 
   //check password
   const isPasswordCorrect = await founder.isPasswordCorrect(password);
   if (!isPasswordCorrect) {
-    return res.status(400).json(new apiErrorHandler(400, "Invalid password"));
+    return error(
+      statusCodes.UNAUTHORIZED,
+      "Incorrect password, please try again"
+    )(res);
   }
   const { accessToken, refreshToken } =
     await generateAccessAndRefreshTokenforFounder(founder._id);
@@ -127,15 +123,11 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
 
 const createReferral = asyncFuncHandler(async (req, res) => {
   const role = req.role;
-  if (role !== "founder") {
-    return res
-      .status(403)
-      .json(
-        new apiErrorHandler(
-          403,
-          "Unauthorized access, restricted to founder only"
-        )
-      );
+  if (role !== roles.FOUNDER) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      "Unauthorized access, restricted to founder only"
+    )(res);
   }
   const { minLength, maxLength } = req?.query;
   const { brand_id } = req?.params;
@@ -143,7 +135,8 @@ const createReferral = asyncFuncHandler(async (req, res) => {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const length =
-    Math.floor(Math.random() * (Number(maxLength) - Number(minLength) + 1)) + Number(minLength);
+    Math.floor(Math.random() * (Number(maxLength) - Number(minLength) + 1)) +
+    Number(minLength);
   let code = "";
 
   for (let i = 0; i < length; i++) {
@@ -153,9 +146,10 @@ const createReferral = asyncFuncHandler(async (req, res) => {
   //check if the code already exists in the database
   const existingCode = await Referral.find({ referral_code: code });
   if (existingCode.length !== 0) {
-    return res
-      .status(400)
-      .json(new apiErrorHandler(400, "Code already exists"));
+    return error(
+      statusCodes.BAD_REQUEST,
+      "Code already exists, please try again"
+    )(res);
   }
 
   //now create a jwt and save it to the database
@@ -174,28 +168,25 @@ const createReferral = asyncFuncHandler(async (req, res) => {
   });
 
   if (!referral) {
-    return res
-      .status(500)
-      .json(new apiErrorHandler(500, "Failed to create referral code"));
+    return error(
+      statusCodes.INTERNAL_SERVER_ERROR,
+      "Failed to create referral code for some unknown reason"
+    )(res);
   }
-  return res
-    .status(201)
-    .json(
-      new apiResponseHandler(201, "Referral code created successfully", token)
-    );
+  return success(
+    statusCodes.CREATED,
+    "Referral code created successfully",
+    referral
+  )(res);
 });
 
 const getReferralToken = asyncFuncHandler(async (req, res) => {
   const role = req.role;
-  if (role !== "founder") {
-    return res
-      .status(403)
-      .json(
-        new apiErrorHandler(
-          403,
-          "Unauthorized access, restricted to founder only"
-        )
-      );
+  if (role !== roles.FOUNDER) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      "Unauthorized access, restricted to founder only"
+    )(res);
   }
   //get the referral token that is not used
   const existingCode = await Referral.find({ used: false }).select({
@@ -203,13 +194,18 @@ const getReferralToken = asyncFuncHandler(async (req, res) => {
   });
 
   if (existingCode.length === 0) {
-    return res
-      .status(400)
-      .json(new apiErrorHandler(400, "No referral code available, create one"));
+    return error(
+      statusCodes.NOT_FOUND,
+      "No referral token found, please create a new one"
+    )(res);
   }
 
   //send all the token to founder
-  return res.status(200).json(existingCode);
+  return success(
+    statusCodes.OK,
+    "Referral token found successfully",
+    existingCode
+  )(res);
 });
 
 export { registerFounder, loginFounder, createReferral, getReferralToken };

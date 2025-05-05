@@ -9,6 +9,7 @@ import {
 } from "@gurukul/shared-server";
 import jwt from "jsonwebtoken";
 import env from "../../../../../../../env.js";
+import { statusCodes } from "../../../../config/constants.js";
 
 const registerEducator = asyncFuncHandler(async (req, res) => {
   const { email, fullName, password } = req?.body;
@@ -16,7 +17,7 @@ const registerEducator = asyncFuncHandler(async (req, res) => {
   //sanitize data from frontend
   if (!email || !fullName || !password) {
     return res
-      .status(400)
+      .status(statusCodes.BAD_REQUEST)
       .json(new apiErrorHandler(400, "Missing required fields"));
   }
   //check token

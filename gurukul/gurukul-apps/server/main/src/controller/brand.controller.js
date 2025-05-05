@@ -5,10 +5,11 @@ import {
   createSubDomain,
   deployBrand,
 } from "@gurukul/shared-server";
+import { roles } from "../../../config/constants.js";
 
 const createBrand = asyncFuncHandler(async (req, res) => {
   const role = req?.role;
-  if (role !== "founder") {
+  if (role !== roles.FOUNDER) {
     return res
       .status(403)
       .json(
