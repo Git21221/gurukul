@@ -1,6 +1,4 @@
 import {
-  apiErrorHandler,
-  apiResponseHandler,
   asyncFuncHandler,
   checkValidEmail,
   checkValidPassword,
@@ -10,37 +8,38 @@ import {
 import jwt from "jsonwebtoken";
 import env from "../../../../../../../env.js";
 import { statusCodes } from "../../../../config/constants.js";
+import {
+  error,
+  success,
+} from "@gurukul/shared-server/utils/formattedReturns.js";
 
 const registerEducator = asyncFuncHandler(async (req, res) => {
   const { email, fullName, password } = req?.body;
   const { token } = req?.query;
   //sanitize data from frontend
   if (!email || !fullName || !password) {
-    return res
-      .status(statusCodes.BAD_REQUEST)
-      .json(new apiErrorHandler(400, "Missing required fields"));
+    return error(statusCodes.BAD_REQUEST, "Missing required fields")(res);
   }
   //check token
   if (!token) {
-    return res.status(400).json(new apiErrorHandler(400, "Missing token"));
+    return error(statusCodes.BAD_REQUEST, "Missing token in query params")(res);
   }
   //check email format
   if (!checkValidEmail(email)) {
-    return res.status(400).json(new apiErrorHandler(400, "Invalid email"));
+    return error(statusCodes.BAD_REQUEST, "Invalid email")(res);
   }
   //check password length and characters
   if (checkValidPassword(password).error) {
-    return res
-      .status(400)
-      .json(new apiErrorHandler(400, checkValidPassword(password).message));
+    return error(
+      statusCodes.BAD_REQUEST,
+      checkValidPassword(password).message
+    )(res);
   }
 
   //check for existed educator
-  const existedEducator = await Educator.find({ emailId: email }, { new: true });
+  const existedEducator = await Educator.find({ email }, { new: true });
   if (existedEducator.length !== 0) {
-    return res
-      .status(400)
-      .json(new apiErrorHandler(400, "Educator already exists"));
+    return error(statusCodes.BAD_REQUEST, "Educator already exists")(res);
   }
 
   //check token validity
@@ -49,11 +48,12 @@ const registerEducator = asyncFuncHandler(async (req, res) => {
     referral_code: tokenData.referral_code,
   }).select({ _id: 1, referral_code: 1, founder_id: 1, brand_id: 1 });
   if (referral.length === 0) {
-    return res.status(400).json(new apiErrorHandler(400, "Invalid token"));
+    return error(statusCodes.BAD_REQUEST, "Invalid token")(res);
   }
   //check if token is already used
-  if (referral[0].used) {
-    return res.status(400).json(new apiErrorHandler(400, "Token already used"));
+  const usedReferral = await Referral.find({ token });
+  if (usedReferral[0].used) {
+    return error(statusCodes.BAD_REQUEST, "Token already used")(res);
   }
 
   //create new educator
@@ -75,30 +75,20 @@ const registerEducator = asyncFuncHandler(async (req, res) => {
     { new: true }
   );
   if (!updatedReferral) {
-    return res
-      .status(500)
-      .json(
-        new apiErrorHandler(
-          500,
-          "Failed to update referral for some unknown reason"
-        )
-      );
+    return error(
+      statusCodes.INTERNAL_SERVER_ERROR,
+      "Failed to update referral code to used"
+    )(res);
   }
 
   if (!educator) {
-    return res
-      .status(500)
-      .json(
-        new apiErrorHandler(
-          500,
-          "Failed to create educator for some unknown reason"
-        )
-      );
+    return error(
+      statusCodes.INTERNAL_SERVER_ERROR,
+      "Failed to create educator for some unknown reason"
+    )(res);
   }
 
-  return res
-    .status(201)
-    .json(new apiResponseHandler(201, "Educator created successfully"));
+  return success(statusCodes.CREATED, "Educator created successfully")(res);
 });
 
 export { registerEducator };

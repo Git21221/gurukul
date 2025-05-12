@@ -4,31 +4,33 @@ import {
   Brand,
   createSubDomain,
   deployBrand,
+  Educator,
 } from "@gurukul/shared-server";
-import { roles } from "../../../config/constants.js";
+import { roles, statusCodes } from "../../../config/constants.js";
+import {
+  error,
+  success,
+} from "@gurukul/shared-server/utils/formattedReturns.js";
 
 const createBrand = asyncFuncHandler(async (req, res) => {
   const role = req?.role;
   if (role !== roles.FOUNDER) {
-    return res
-      .status(403)
-      .json(
-        new apiErrorHandler(403, "Unauthorized access, restricted to founder only")
-      );
+    return error(
+      statusCodes.UNAUTHORIZED,
+      "Unauthorized access, restricted to founder only"
+    )(res);
   }
-  const { name, logo, color, founderName } = req?.body;
-  // const { founderId } = req?.user;
+  const { name, logo, color } = req?.body;
   //sanitize data from frontend
   if (!name || !logo || !color) {
-    return res
-      .status(400)
-      .json(new apiErrorHandler(400, "Missing required fields"));
+    return error(400, statusCodes.BAD_REQUEST, "Missing required fields")(res);
   }
   const brand = await Brand.find({ name }, { new: true });
   if (brand.length !== 0) {
-    return res
-      .status(400)
-      .json(new apiErrorHandler(400, "Brand name already exists"));
+    return error(
+      statusCodes.BAD_REQUEST,
+      "Brand already exists for this name"
+    )(res);
   }
   //now create dummy brand
   const dummyBrand = await Brand.create({
@@ -39,9 +41,10 @@ const createBrand = asyncFuncHandler(async (req, res) => {
     established_by: req.user._id,
   });
   if (!dummyBrand) {
-    return res
-      .status(500)
-      .json(new apiErrorHandler(500, "Failed to create brand for some reason"));
+    return error(
+      statusCodes.INTERNAL_SERVER_ERROR,
+      "Failed to create brand for some unknown reason"
+    )(res);
   }
 
   //check for existed brand
@@ -73,13 +76,62 @@ const createBrand = asyncFuncHandler(async (req, res) => {
   //   base_url: `${name}.${founderId}.gurukul.com`,
   //   established_by: founderId,
   // });
-  return res
-    .status(201)
-    .json(new apiResponseHandler(201, "Brand created successfully"));
+  return success(
+    statusCodes.CREATED,
+    "Brand created successfully",
+    dummyBrand
+  )(res);
 });
 
-const getAllEducators = asyncFuncHandler(async (req, res) => {
-  
-});
+const getAllEducatorsOfAllBrandsBelongsToFounder = asyncFuncHandler(
+  async (req, res) => {
+    const role = req?.role;
+    if (role !== roles.FOUNDER) {
+      return error(
+        401,
+        statusCodes.UNAUTHORIZED,
+        "Unauthorized access, restricted to founder only"
+      )(res);
+    }
+    const founderId = req.user._id;
+    const brands = await Brand.find({ established_by: founderId });
+    if (!brands.length) {
+      return error(
+        404,
+        statusCodes.NOT_FOUND,
+        "No brands found for this founder"
+      )(res);
+    }
+    const brandIds = brands.map((brand) => brand._id);
+    const educators = await Brand.aggregate([
+      {
+        $match: {
+          _id: { $in: brandIds },
+        },
+      },
+      {
+        $lookup: {
+          from: "educators",
+          localField: "_id",
+          foreignField: "belongs_to_brand",
+          as: "educators",
+        },
+      },
+    ]);
+    console.log("educators", educators);
+    
+    if (!educators.length) {
+      return error(
+        statusCodes.NOT_FOUND,
+        "No educators found for this founder"
+      )(res);
+    }
+    return success(
+      statusCodes.OK,
+      "Educators found successfully",
+      educators
+    )(res);
+  }
+);
 
-export { createBrand, getAllEducators };
+export { createBrand, getAllEducatorsOfAllBrandsBelongsToFounder };

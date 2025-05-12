@@ -5,8 +5,7 @@ import {
   loginFounder,
   registerFounder,
 } from "../controller/founder.controller.js";
-import verifyROLE from "@gurukul/shared-server/middleware/verifyRole.middleware.js";
-import { verifyJWT } from "@gurukul/shared-server/middleware/verifyJWT.middleware.js";
+import { verifyJWT, verifyROLE } from "@gurukul/shared-server";
 
 export const founderRoutes = Router();
 

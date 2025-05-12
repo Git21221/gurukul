@@ -6,13 +6,12 @@ import jwt from "jsonwebtoken";
 const verifyROLE = asyncFuncHandler(async (req, res, next) => {
   const user_role = req.cookies?.user_role;
   if (!user_role) {
-    return res.status(401).json(new apiErrorHandler(401, "Role not found in cookies"));
+    return res
+      .status(401)
+      .json(new apiErrorHandler(401, "Role not found in cookies"));
   }
   console.log(user_role);
-  const decodedUserRole = jwt.verify(
-    user_role,
-    env.JWT_USER_ROLE_SECRET
-  );
+  const decodedUserRole = jwt.verify(user_role, env.JWT_USER_ROLE_SECRET);
   console.log(decodedUserRole);
   if (!decodedUserRole) {
     return res.status(401).json(new apiErrorHandler(401, "Invalid role token"));
@@ -21,4 +20,4 @@ const verifyROLE = asyncFuncHandler(async (req, res, next) => {
   next();
 });
 
-export default verifyROLE;
+export { verifyROLE };

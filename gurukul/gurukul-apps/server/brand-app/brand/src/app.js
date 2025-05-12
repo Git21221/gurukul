@@ -4,6 +4,8 @@ import express from "express";
 import cors from "cors";
 import env from "../../../../../../env.js";
 import { educatorRouter } from "./routes/educator.route.js";
+import { playlistRouter } from "./routes/playlist.route.js";
+import { videoRouter } from "./routes/video.route.js";
 
 const app = express();
 
@@ -16,5 +18,7 @@ app.use(cors({
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(`/api/${env.SERVER_API_VERSION}/brand/educator`, educatorRouter);
+app.use(`/api/${env.SERVER_API_VERSION}/brand/playlist`, playlistRouter);
+app.use(`/api/${env.SERVER_API_VERSION}/brand/video`, videoRouter);
 
 export { app };
