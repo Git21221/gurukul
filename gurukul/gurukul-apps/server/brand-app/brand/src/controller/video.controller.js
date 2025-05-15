@@ -13,6 +13,7 @@ import {
 } from "@gurukul/shared-server";
 import { roles, statusCodes } from "../../../../config/constants.js";
 import env from "../../../../../../../env.js";
+import mongoose from "mongoose";
 
 const s3 = new S3Client({
   region: env.AWS_REGION,
@@ -159,4 +160,77 @@ const uploadVideo = asyncFuncHandler(async (req, res) => {
   return success(statusCodes.OK, "Video uploaded successfully", video)(res);
 });
 
-export { uploadVideo };
+const getSingleVideo = asyncFuncHandler(async (req, res) => {
+  const isAuthorised = await verifyBrandWithUser(
+    req.role,
+    req.params.brandId,
+    req.user._id
+  );
+  if (!isAuthorised) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      "Unauthorized access, you are not associated with this brand"
+    )(res);
+  }
+  const videoId = req.params.videoId;
+  if (!videoId) {
+    return error(statusCodes.BAD_REQUEST, "Video ID is required")(res);
+  }
+  const video = await Video.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(videoId) } },
+
+    {
+      $lookup: {
+        from: "videometadatas",
+        localField: "video_metadata",
+        foreignField: "_id",
+        as: "video_metadata",
+      },
+    },
+    {
+      $lookup: {
+        from: "audiometadatas",
+        localField: "audio_metadata",
+        foreignField: "_id",
+        as: "audio_metadata",
+      },
+    },
+    {
+      $lookup: {
+        from: "founders",
+        let: { founderId: "$uploaded_by_founder" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$founderId"] } } },
+          { $project: { fullName: 1, email: 1, _id: 0 } },
+        ],
+        as: "uploaded_by_founder",
+      },
+    },
+    {
+      $lookup: {
+        from: "educators",
+        let: { educatorId: "$uploaded_by_educator" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$educatorId"] } } },
+          { $project: { fullName: 1, email: 1, _id: 0 } },
+        ],
+        as: "uploaded_by_educator",
+      },
+    },
+    {
+      $addFields: {
+        uploaded_by_founder: { $arrayElemAt: ["$uploaded_by_founder", 0] },
+        uploaded_by_educator: { $arrayElemAt: ["$uploaded_by_educator", 0] },
+        video_metadata: { $arrayElemAt: ["$video_metadata", 0] },
+        audio_metadata: { $arrayElemAt: ["$audio_metadata", 0] },
+      },
+    },
+  ]);
+
+  if (!video) {
+    return error(statusCodes.NOT_FOUND, "Video not found")(res);
+  }
+  return success(statusCodes.OK, "Video fetched successfully", video)(res);
+});
+
+export { uploadVideo, getSingleVideo };

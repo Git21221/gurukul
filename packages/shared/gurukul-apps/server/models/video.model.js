@@ -31,9 +31,13 @@ const videoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    uploaded_by: {
+    uploaded_by_founder: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Founder",
+    },
+    uploaded_by_educator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Educator",
     },
     created_by: {
       type: mongoose.Schema.Types.ObjectId,

@@ -4,6 +4,7 @@ import {
   Educator,
   Playlist,
   verifyBrandWithUser,
+  Video,
 } from "@gurukul/shared-server";
 import {
   error,
@@ -23,11 +24,7 @@ const createPlaylist = asyncFuncHandler(async (req, res) => {
   const { name, description, videos } = req?.body;
   const { brandId } = req?.params;
   //check if brandId is valid for this user
-  const isAuthorised = await verifyBrandWithUser(
-    role,
-    brandId,
-    req.user._id
-  );
+  const isAuthorised = await verifyBrandWithUser(role, brandId, req.user._id);
   if (!isAuthorised) {
     return error(
       statusCodes.UNAUTHORIZED,
@@ -64,7 +61,7 @@ const createPlaylist = asyncFuncHandler(async (req, res) => {
   if (role === roles.EDUCATOR) {
     playlistData.created_by_educator = req.user._id;
   }
-  
+
   if (role === roles.FOUNDER) {
     playlistData.created_by_founder = req.user._id;
   }
@@ -84,4 +81,126 @@ const createPlaylist = asyncFuncHandler(async (req, res) => {
   )(res);
 });
 
-export { createPlaylist };
+const addVideosToPlaylist = asyncFuncHandler(async (req, res) => {
+  const role = req?.role;
+  if (role !== roles.EDUCATOR && role !== roles.FOUNDER) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      "Unauthorized access, restricted to educator and founder only"
+    )(res);
+  }
+  const { playlistId, brandId } = req.params;
+  if (!playlistId || !brandId) {
+    return error(statusCodes.BAD_REQUEST, "Missing required fields")(res);
+  }
+  const isAuthorised = await verifyBrandWithUser(role, brandId, req.user._id);
+  if (!isAuthorised) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      "Unauthorized access, you are not associated with this brand"
+    )(res);
+  }
+  //check if playlist exists
+  const playlist = await Playlist.findById(playlistId);
+  if (!playlist) {
+    return error(statusCodes.NOT_FOUND, "Playlist not found")(res);
+  }
+  //check if videos are valid
+  const { videos } = req.body;
+  if (!videos) {
+    return error(statusCodes.BAD_REQUEST, "videos required")(res);
+  }
+  if (!Array.isArray(videos) && videos.length === 0) {
+    return error(statusCodes.BAD_REQUEST, "No videos provided")(res);
+  }
+  const videoObjectIds = videos.map((id) => new mongoose.Types.ObjectId(id));
+  const videosToAdd = await Video.find(
+    { _id: { $in: videoObjectIds } },
+    { new: true }
+  );
+  if (videosToAdd.length === 0) {
+    return error(statusCodes.NOT_FOUND, "No videos found")(res);
+  }
+  //check if videos are already in playlist
+  const existingIds = new Set(playlist.videos.map((video) => video.toString()));
+
+  const videosToAddIds = videosToAdd
+    .map((video) => video._id)
+    .filter((id) => !existingIds.has(id.toString()));
+  if (videosToAddIds.length === 0) {
+    return error(statusCodes.BAD_REQUEST, "Videos already in playlist")(res);
+  }
+  playlist.videos.push(...videosToAddIds);
+  await playlist.save();
+  return success(
+    statusCodes.OK,
+    "Videos added to playlist successfully",
+    playlist
+  )(res);
+});
+const removeVideosFromPlaylist = asyncFuncHandler(async (req, res) => {
+  const role = req?.role;
+  if (role !== roles.EDUCATOR && role !== roles.FOUNDER) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      "Unauthorized access, restricted to educator and founder only"
+    )(res);
+  }
+  const { playlistId, brandId } = req.params;
+  const isAuthorised = await verifyBrandWithUser(role, brandId, req.user._id);
+  if (!isAuthorised) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      "Unauthorized access, you are not associated with this brand"
+    )(res);
+  }
+  if (!playlistId || !brandId) {
+    return error(statusCodes.BAD_REQUEST, "Missing required fields")(res);
+  }
+  //check if playlist exists
+  const playlist = await Playlist.findById(playlistId);
+  if (!playlist) {
+    return error(statusCodes.NOT_FOUND, "Playlist not found")(res);
+  }
+  //check if videos are valid
+  const { videos } = req.body;
+  if (!videos) {
+    return error(statusCodes.BAD_REQUEST, "videos required")(res);
+  }
+  if (!Array.isArray(videos) && videos?.length === 0) {
+    return error(statusCodes.BAD_REQUEST, "No videos provided")(res);
+  }
+  const videoObjectIds = videos.map((id) => new mongoose.Types.ObjectId(id));
+  const videosToRemove = await Video.find(
+    { _id: { $in: videoObjectIds } },
+    { new: true }
+  );
+  if (videosToRemove.length === 0) {
+    return error(statusCodes.NOT_FOUND, "No videos found")(res);
+  }
+  //check if videos are already in playlist
+  const existingIds = new Set(playlist.videos.map((video) => video.toString()));
+  const videosToRemoveIds = videosToRemove
+    .map((video) => video._id)
+    .filter((id) => existingIds.has(id.toString()));
+
+  if (videosToRemoveIds.length === 0) {
+    return error(statusCodes.BAD_REQUEST, "Videos not in playlist")(res);
+  }
+
+  const removeSet = new Set(videosToRemoveIds.map((id) => id.toString()));
+
+  playlist.videos = playlist.videos.filter(
+    (video) => !removeSet.has(video.toString())
+  );
+
+  await playlist.save();
+
+  return success(
+    statusCodes.OK,
+    "Videos removed from playlist successfully",
+    playlist
+  )(res);
+});
+
+export { createPlaylist, addVideosToPlaylist, removeVideosFromPlaylist };
