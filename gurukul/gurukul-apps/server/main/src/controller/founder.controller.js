@@ -85,7 +85,6 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
       "Founder not found, please register"
     )(res);
   }
-  console.log(founder);
 
   //check password
   const isPasswordCorrect = await founder.isPasswordCorrect(password);

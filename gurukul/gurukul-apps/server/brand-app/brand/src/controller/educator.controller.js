@@ -1,9 +1,12 @@
 import {
+  accessTokenOptions,
   asyncFuncHandler,
   checkValidEmail,
   checkValidPassword,
   Educator,
+  generateAccessAndRefreshTokenforEducator,
   Referral,
+  refreshTokenOptions,
 } from "@gurukul/shared-server";
 import jwt from "jsonwebtoken";
 import env from "../../../../../../../env.js";
@@ -12,6 +15,7 @@ import {
   error,
   success,
 } from "@gurukul/shared-server/utils/formattedReturns.js";
+import mongoose from "mongoose";
 
 const registerEducator = asyncFuncHandler(async (req, res) => {
   const { email, fullName, password } = req?.body;
@@ -91,4 +95,69 @@ const registerEducator = asyncFuncHandler(async (req, res) => {
   return success(statusCodes.CREATED, "Educator created successfully")(res);
 });
 
-export { registerEducator };
+const loginEducator = asyncFuncHandler(async (req, res) => {
+  const { email, password } = req?.body;
+  const { brandId } = req?.params;
+  const isAuthorisedInBrand = await Educator.findOne(
+    { email, belongs_to_brand: new mongoose.Types.ObjectId(brandId) },
+    { new: true }
+  );
+  if (!isAuthorisedInBrand) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      "Unauthorized access, you are not associated with this brand"
+    )(res);
+  }
+  //sanitize data from frontend
+  if (!email || !password) {
+    return error(statusCodes.BAD_REQUEST, "Missing required fields")(res);
+  }
+  // check email format
+  if (!checkValidEmail(email)) {
+    return error(statusCodes.BAD_REQUEST, "Invalid email")(res);
+  }
+  //check password length and characters
+  if (checkValidPassword(password).error) {
+    return error(
+      statusCodes.BAD_REQUEST,
+      checkValidPassword(password).message
+    )(res);
+  }
+  //check for existed educator
+  const educator = await Educator.findOne({ email }, { new: true });
+  if (!educator) {
+    return error(statusCodes.BAD_REQUEST, "Educator does not exist")(res);
+  }
+  //check password
+  const isPasswordCorrect = await educator.isPasswordCorrect(password);
+  if (!isPasswordCorrect) {
+    return error(statusCodes.BAD_REQUEST, "Incorrect password")(res);
+  }
+
+  //create token
+  const { accessToken, refreshToken } =
+    await generateAccessAndRefreshTokenforEducator();
+  const hashedUserRole = await educator.hashUserRole();
+  const loggedInEducator = await Educator.findById(educator._id).select(
+    "-password"
+  );
+
+  return res
+    .status(200)
+    .cookie("refreshToken", refreshToken, refreshTokenOptions)
+    .cookie("accessToken", accessToken, accessTokenOptions)
+    .cookie("user_role", hashedUserRole, {
+      httpOnly: false,
+      secure: true,
+      sameSite: "none",
+    })
+    .json(
+      new apiResponseHandler(
+        200,
+        "Founder logged in successfully",
+        loggedInEducator
+      )
+    );
+});
+
+export { registerEducator, loginEducator };

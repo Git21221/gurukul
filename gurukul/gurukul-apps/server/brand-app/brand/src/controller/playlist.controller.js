@@ -138,6 +138,7 @@ const addVideosToPlaylist = asyncFuncHandler(async (req, res) => {
     playlist
   )(res);
 });
+
 const removeVideosFromPlaylist = asyncFuncHandler(async (req, res) => {
   const role = req?.role;
   if (role !== roles.EDUCATOR && role !== roles.FOUNDER) {

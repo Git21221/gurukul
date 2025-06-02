@@ -6,6 +6,7 @@ import env from "../../../../../../env.js";
 import { educatorRouter } from "./routes/educator.route.js";
 import { playlistRouter } from "./routes/playlist.route.js";
 import { videoRouter } from "./routes/video.route.js";
+import { courseRouter } from "./routes/course.routes.js";
 
 const app = express();
 
@@ -20,5 +21,6 @@ app.use(bodyParser.json());
 app.use(`/api/${env.SERVER_API_VERSION}/brand/educator`, educatorRouter);
 app.use(`/api/${env.SERVER_API_VERSION}/brand/playlist`, playlistRouter);
 app.use(`/api/${env.SERVER_API_VERSION}/brand/video`, videoRouter);
+app.use(`/api/${env.SERVER_API_VERSION}/brand/course`, courseRouter);
 
 export { app };
