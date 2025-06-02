@@ -1,8 +1,8 @@
 import { connectionDB } from "@gurukul/shared-server";
 import { app } from "./app.js";
-import env from "../../../../../env.js";
+import env from "../../../../../../env.js";
 
-const PORT = env.MAIN_SERVER_PORT || 8000;
+const PORT = env.BRAND_SERVER_PORT || 8001;
 
 connectionDB()
   .then(() => {

@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { J } from './api/J'
+import { Input } from '@gurukul/shared-client'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -15,6 +16,7 @@ function App() {
         <p>Current count: {count}</p>
         <button onClick={() => setCount(count + 1)}>Increase Count</button>
       </div>
+      <Input />
     </>
   )
 }

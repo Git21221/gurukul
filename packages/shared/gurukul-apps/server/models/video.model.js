@@ -8,6 +8,19 @@ const videoSchema = new mongoose.Schema(
       maxLength: 100,
       minLength: 5,
     },
+    key: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    object_url: {
+      type: String,
+      required: true,
+    },
+    etag: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: false,
@@ -18,30 +31,24 @@ const videoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    video_length: {
-      type: String,
-      required: true,
-    },
-    video_size: {
-      type: String,
-      required: true,
-    },
-    video_type: {
-      type: String,
-      required: true,
-    },
-    uploaded_by: {
+    uploaded_by_founder: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Founder",
+    },
+    uploaded_by_educator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Educator",
     },
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Educator",
     },
-    uploaded_to_courses: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
-    }],
+    uploaded_to_courses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
     uploaded_to_brand: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
@@ -49,6 +56,14 @@ const videoSchema = new mongoose.Schema(
     video_url: {
       type: String,
       required: true,
+    },
+    video_metadata: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "VideoMetaData",
+    },
+    audio_metadata: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AudioMetaData",
     },
   },
   {

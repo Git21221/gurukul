@@ -9,26 +9,31 @@ const courseSchema = new mongoose.Schema(
       minlength: 5,
       maxlength: 50,
     },
-    price: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Price",
-        required: true,
-      },
-    ],
+    description: {
+      type: String,
+      required: false,
+      trim: true,
+      minlength: 10,
+      maxlength: 500,
+    },
+    price: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Price",
+      required: true,
+    },
     total_video_duration: {
       type: Number,
-      required: true,
+      required: false,
       default: 0,
     },
     total_article: {
       type: Number,
-      required: true,
+      required: false,
       default: 0,
     },
     total_downloadable_resource: {
       type: Number,
-      required: true,
+      required: false,
     },
     belongs_to_brand: {
       type: mongoose.Schema.Types.ObjectId,
@@ -54,7 +59,7 @@ const courseSchema = new mongoose.Schema(
     ],
     table_of_contents: {
       type: [String],
-      required: true,
+      required: false,
     },
     avg_star: {
       type: Number,

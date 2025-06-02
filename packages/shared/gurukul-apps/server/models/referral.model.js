@@ -6,7 +6,7 @@ const referralSchema = new mongoose.Schema({
     required: true,
     unique: true,
     minlength: 6,
-    maxlength: 6
+    maxlength: 10
   },
   founder_id: {
     type: mongoose.Schema.Types.ObjectId,
@@ -19,6 +19,11 @@ const referralSchema = new mongoose.Schema({
   used: {
     type: Boolean,
     default: false
+  },
+  token: {
+    type: String,
+    required: true,
+    unique: true
   },
   used_by_educator: {
     type: mongoose.Schema.Types.ObjectId,

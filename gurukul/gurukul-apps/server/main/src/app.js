@@ -1,12 +1,22 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-dotenv.config({ path: join(__dirname, '../.env') });
+import env from '../../../../../env.js';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import { founderRoutes } from './routes/founder.route.js';
+import { brandRouter } from './routes/brand.route.js';
 
 const app = express();
-console.log(process.env.CORS_ORIGIN);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+  origin: env.CORS_ORIGIN,
+  credentials: true,
+}));
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(`/api/${env.SERVER_API_VERSION}/main/founder`, founderRoutes);
+app.use(`/api/${env.SERVER_API_VERSION}/main/brand`, brandRouter);
 
 export { app };
