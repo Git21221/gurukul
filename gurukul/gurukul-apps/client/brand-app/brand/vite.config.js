@@ -8,9 +8,18 @@ export default defineConfig({
   base: './',
   resolve: {
     alias: {
-      "@components": path.resolve(__dirname, "../../../../../../packages/common/components/*"),
-      "@hooks": path.resolve(__dirname, "../../../../../packages/common/hooks/*"),
-      "@utils": path.resolve(__dirname, "../../../../../packages/common/utils/*"),
+      "@components": path.resolve(__dirname, "../../../../../../packages/common/components"),
+      "@hooks": path.resolve(__dirname, "../../../../../packages/common/hooks"),
+      "@utils": path.resolve(__dirname, "../../../../../packages/common/utils"),
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        includePaths: [
+          path.resolve(__dirname, "../../../../../../packages/shared/gurukul-apps/client/colors"),
+        ],
+      },
     },
   },
   build: {
