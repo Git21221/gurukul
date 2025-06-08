@@ -1,32 +1,27 @@
-import bodyParser from "body-parser";
-import cookieParser from "cookie-parser";
-import express from "express";
-import cors from "cors";
-import env from "../../../../../../env.js";
-import { educatorRouter } from "./routes/educator.route.js";
-import { playlistRouter } from "./routes/playlist.route.js";
-import { videoRouter } from "./routes/video.route.js";
-import { courseRouter } from "./routes/course.routes.js";
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import express from 'express';
+import cors from 'cors';
+import env from '../../../../../../env.js';
+import { educatorRouter } from './routes/educator.route.js';
+import { playlistRouter } from './routes/playlist.route.js';
+import { videoRouter } from './routes/video.route.js';
+import { courseRouter } from './routes/course.routes.js';
 
 const app = express();
-const isDev = env.ENVIRONMENT='development'
- === "development";
+const isDev = (env.ENVIRONMENT = 'development' === 'development');
 const corsOptions = {
   origin: (origin, callback) => {
-    console.log(`CORS: Origin ${origin} requested`);
     if (!origin) return callback(null, false);
-
-    if (isDev && origin.startsWith("http://localhost")) {
-      console.log(`CORS: Allowing origin ${origin} in development mode`);
+    if (isDev && origin.startsWith('http://localhost')) {
       return callback(null, true);
     }
-
     const allowedOriginRegex = /^https:\/\/[a-z0-9-]+\.gurukul\.com$/;
     if (allowedOriginRegex.test(origin)) {
       return callback(null, true);
     }
 
-    callback(new Error("CORS policy violation: Origin not allowed"));
+    callback(new Error('CORS policy violation: Origin not allowed'));
   },
   credentials: true,
 };
