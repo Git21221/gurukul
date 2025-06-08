@@ -1,5 +1,5 @@
 {
-  "name": "payment-main",
+  "name": "payment-main-payment-server",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {

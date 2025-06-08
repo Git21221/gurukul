@@ -1,5 +1,5 @@
 {
-  "name": "gurukul-app",
+  "name": "gurukul-app-main-server",
   "version": "1.0.0",
   "type": "module",
   "description": "Gurukul main website server module",
