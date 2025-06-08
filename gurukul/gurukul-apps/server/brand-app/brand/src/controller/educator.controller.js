@@ -1,5 +1,6 @@
 import {
   accessTokenOptions,
+  apiResponseHandler,
   asyncFuncHandler,
   checkValidEmail,
   checkValidPassword,
@@ -124,7 +125,7 @@ const loginEducator = asyncFuncHandler(async (req, res) => {
     )(res);
   }
   //check for existed educator
-  const educator = await Educator.findOne({ email }, { new: true });
+  const educator = await Educator.findOne({ email });
   if (!educator) {
     return error(statusCodes.BAD_REQUEST, "Educator does not exist")(res);
   }
@@ -136,7 +137,7 @@ const loginEducator = asyncFuncHandler(async (req, res) => {
 
   //create token
   const { accessToken, refreshToken } =
-    await generateAccessAndRefreshTokenforEducator();
+    await generateAccessAndRefreshTokenforEducator(educator._id);
   const hashedUserRole = await educator.hashUserRole();
   const loggedInEducator = await Educator.findById(educator._id).select(
     "-password"
@@ -160,4 +161,30 @@ const loginEducator = asyncFuncHandler(async (req, res) => {
     );
 });
 
-export { registerEducator, loginEducator };
+const verifyToken = asyncFuncHandler(async (req, res) => {
+  const accessToken = req?.cookies?.accessToken;
+  if( !accessToken ) {
+    return error(statusCodes.UNAUTHORIZED, "No access token found in cookies, Kindly login again")(res);
+  }
+  try {
+    const decoded = jwt.verify(accessToken, env.JWT_ACCESS_TOKEN_SECRET);
+    return success(statusCodes.OK, "Token is valid", decoded)(res);
+  } catch (err) {
+    return error(statusCodes.UNAUTHORIZED, "Invalid or expired token")(res);
+  }
+});
+
+const verifyRole = asyncFuncHandler(async (req, res, next) => {
+  const userRole = req?.cookies?.user_role;
+  if (!userRole) {
+    return error(statusCodes.UNAUTHORIZED, "User role not found in cookies")(res);
+  }
+  try {
+    const decodedRole = jwt.verify(userRole, env.JWT_USER_ROLE_SECRET);
+    return success(statusCodes.OK, "User role is valid", decodedRole)(res);
+  } catch (err) {
+    return error(statusCodes.UNAUTHORIZED, "Invalid or expired user role")(res);
+  }
+});
+
+export { registerEducator, loginEducator, verifyToken, verifyRole };
