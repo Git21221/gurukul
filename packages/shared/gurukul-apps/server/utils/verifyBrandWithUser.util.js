@@ -1,9 +1,8 @@
-import {
-  roles,
-} from "../../../../../gurukul/gurukul-apps/server/config/constants.js";
-import { Brand } from "../models/brand.model.js";
-import { Educator } from "../models/educator.model.js";
-import { Mentor } from "../models/mentor.model.js";
+import { roles } from '../../../../../gurukul/gurukul-apps/server/config/constants.js';
+import { Brand } from '../models/brand.model.js';
+import { Educator } from '../models/educator.model.js';
+import { Mentor } from '../models/mentor.model.js';
+import { User } from '../models/user.model.js';
 
 export const verifyBrandWithUser = async (role, brandId, userId) => {
   if (!role || !brandId || !userId) {
@@ -32,6 +31,14 @@ export const verifyBrandWithUser = async (role, brandId, userId) => {
       belongs_to_brand: brandId,
     });
     return !!mentor;
+  }
+
+  if (role === roles.USER) {
+    const user = await User.findOne({
+      _id: userId,
+      platform_of_account: brandId,
+    });
+    return !!user;
   }
 
   return false;

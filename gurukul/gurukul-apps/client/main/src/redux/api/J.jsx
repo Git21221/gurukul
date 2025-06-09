@@ -1,4 +1,4 @@
-import { Input } from "@gurukul/shared-client";
+import { Input } from '@gurukul/shared-client';
 
 export const J = () => {
   return (
@@ -7,5 +7,5 @@ export const J = () => {
       <p>This is a J component.</p>
       <Input />
     </div>
-  )
+  );
 };

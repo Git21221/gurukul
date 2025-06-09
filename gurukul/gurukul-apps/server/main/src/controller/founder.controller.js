@@ -9,14 +9,14 @@ import {
   generateAccessAndRefreshTokenforFounder,
   Referral,
   refreshTokenOptions,
-} from "@gurukul/shared-server";
-import jwt from "jsonwebtoken";
-import env from "../../../../../../env.js";
-import { roles, statusCodes } from "../../../config/constants.js";
+} from '@gurukul/shared-server';
+import jwt from 'jsonwebtoken';
+import env from '../../../../../../env.js';
+import { roles, statusCodes } from '../../../config/constants.js';
 import {
   error,
   success,
-} from "@gurukul/shared-server/utils/formattedReturns.js";
+} from '@gurukul/shared-server/utils/formattedReturns.js';
 
 const registerFounder = asyncFuncHandler(async (req, res) => {
   const { email, fullName, password } = req?.body;
@@ -24,11 +24,11 @@ const registerFounder = asyncFuncHandler(async (req, res) => {
   if (!email || !fullName || !password) {
     return res
       .status(400)
-      .json(new apiErrorHandler(400, "Missing required fields"));
+      .json(new apiErrorHandler(400, 'Missing required fields'));
   }
   //check email format
   if (!checkValidEmail(email)) {
-    return res.status(400).json(new apiErrorHandler(400, "Invalid email"));
+    return res.status(400).json(new apiErrorHandler(400, 'Invalid email'));
   }
   //check password length and characters
   if (checkValidPassword(password).error) {
@@ -42,7 +42,7 @@ const registerFounder = asyncFuncHandler(async (req, res) => {
   if (existedFounder.length !== 0) {
     return res
       .status(400)
-      .json(new apiErrorHandler(400, "Founder already exists"));
+      .json(new apiErrorHandler(400, 'Founder already exists'));
   }
 
   //create new founder
@@ -54,14 +54,14 @@ const registerFounder = asyncFuncHandler(async (req, res) => {
       .json(
         new apiErrorHandler(
           500,
-          "Failed to create founder for some unknown reason"
+          'Failed to create founder for some unknown reason'
         )
       );
   }
 
   return res
     .status(201)
-    .json(new apiResponseHandler(201, "Founder created successfully"));
+    .json(new apiResponseHandler(201, 'Founder created successfully'));
 });
 
 const loginFounder = asyncFuncHandler(async (req, res) => {
@@ -71,18 +71,18 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
 
   //sanitize data from frontend
   if (!email || !password) {
-    return error(statusCodes.BAD_REQUEST, "Missing required fields")(res);
+    return error(statusCodes.BAD_REQUEST, 'Missing required fields')(res);
   }
   //check email format
   if (!checkValidEmail(email)) {
-    return error(statusCodes.BAD_REQUEST, "Invalid email format")(res);
+    return error(statusCodes.BAD_REQUEST, 'Invalid email format')(res);
   }
   //check for existed founder
   const founder = await Founder.findOne({ email });
   if (!founder) {
     return error(
       statusCodes.NOT_FOUND,
-      "Founder not found, please register"
+      'Founder not found, please register'
     )(res);
   }
 
@@ -91,7 +91,7 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
   if (!isPasswordCorrect) {
     return error(
       statusCodes.UNAUTHORIZED,
-      "Incorrect password, please try again"
+      'Incorrect password, please try again'
     )(res);
   }
   const { accessToken, refreshToken } =
@@ -99,22 +99,22 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
 
   const hashedUserRole = await founder.hashUserRole();
   const loggedInFounder = await Founder.findById(founder._id).select(
-    "-password"
+    '-password'
   );
 
   return res
     .status(200)
-    .cookie("refreshToken", refreshToken, refreshTokenOptions)
-    .cookie("accessToken", accessToken, accessTokenOptions)
-    .cookie("user_role", hashedUserRole, {
+    .cookie('refreshToken', refreshToken, refreshTokenOptions)
+    .cookie('accessToken', accessToken, accessTokenOptions)
+    .cookie('user_role', hashedUserRole, {
       httpOnly: false,
       secure: true,
-      sameSite: "none",
+      sameSite: 'none',
     })
     .json(
       new apiResponseHandler(
         200,
-        "Founder logged in successfully",
+        'Founder logged in successfully',
         loggedInFounder
       )
     );
@@ -125,18 +125,18 @@ const createReferral = asyncFuncHandler(async (req, res) => {
   if (role !== roles.FOUNDER) {
     return error(
       statusCodes.UNAUTHORIZED,
-      "Unauthorized access, restricted to founder only"
+      'Unauthorized access, restricted to founder only'
     )(res);
   }
   const { minLength, maxLength } = req?.query;
   const { brand_id } = req?.params;
   //create a unique code for referral
   const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const length =
     Math.floor(Math.random() * (Number(maxLength) - Number(minLength) + 1)) +
     Number(minLength);
-  let code = "";
+  let code = '';
 
   for (let i = 0; i < length; i++) {
     code += characters.charAt(Math.floor(Math.random() * characters.length));
@@ -147,7 +147,7 @@ const createReferral = asyncFuncHandler(async (req, res) => {
   if (existingCode.length !== 0) {
     return error(
       statusCodes.BAD_REQUEST,
-      "Code already exists, please try again"
+      'Code already exists, please try again'
     )(res);
   }
 
@@ -169,12 +169,12 @@ const createReferral = asyncFuncHandler(async (req, res) => {
   if (!referral) {
     return error(
       statusCodes.INTERNAL_SERVER_ERROR,
-      "Failed to create referral code for some unknown reason"
+      'Failed to create referral code for some unknown reason'
     )(res);
   }
   return success(
     statusCodes.CREATED,
-    "Referral code created successfully",
+    'Referral code created successfully',
     referral
   )(res);
 });
@@ -184,7 +184,7 @@ const getReferralToken = asyncFuncHandler(async (req, res) => {
   if (role !== roles.FOUNDER) {
     return error(
       statusCodes.UNAUTHORIZED,
-      "Unauthorized access, restricted to founder only"
+      'Unauthorized access, restricted to founder only'
     )(res);
   }
   //get the referral token that is not used
@@ -195,16 +195,55 @@ const getReferralToken = asyncFuncHandler(async (req, res) => {
   if (existingCode.length === 0) {
     return error(
       statusCodes.NOT_FOUND,
-      "No referral token found, please create a new one"
+      'No referral token found, please create a new one'
     )(res);
   }
 
   //send all the token to founder
   return success(
     statusCodes.OK,
-    "Referral token found successfully",
+    'Referral token found successfully',
     existingCode
   )(res);
 });
 
-export { registerFounder, loginFounder, createReferral, getReferralToken };
+const verifyToken = asyncFuncHandler(async (req, res) => {
+  const accessToken = req?.cookies?.accessToken;
+  if (!accessToken) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      'No access token found in cookies, Kindly login again'
+    )(res);
+  }
+  try {
+    const decoded = jwt.verify(accessToken, env.JWT_ACCESS_TOKEN_SECRET);
+    return success(statusCodes.OK, 'Token is valid', decoded)(res);
+  } catch (err) {
+    return error(statusCodes.UNAUTHORIZED, 'Invalid or expired token')(res);
+  }
+});
+
+const verifyRole = asyncFuncHandler(async (req, res, next) => {
+  const userRole = req?.cookies?.user_role;
+  if (!userRole) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      'User role not found in cookies'
+    )(res);
+  }
+  try {
+    const decodedRole = jwt.verify(userRole, env.JWT_USER_ROLE_SECRET);
+    return success(statusCodes.OK, 'User role is valid', decodedRole)(res);
+  } catch (err) {
+    return error(statusCodes.UNAUTHORIZED, 'Invalid or expired user role')(res);
+  }
+});
+
+export {
+  registerFounder,
+  loginFounder,
+  createReferral,
+  getReferralToken,
+  verifyToken,
+  verifyRole,
+};

@@ -1,4 +1,8 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import env from '../../../../../env.js';
+import { roles } from '../../../../../gurukul/gurukul-apps/server/config/constants.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -9,7 +13,6 @@ const userSchema = new mongoose.Schema(
     emailId: {
       type: String,
       required: true,
-      unique: true,
     },
     password: {
       type: String,
@@ -25,11 +28,12 @@ const userSchema = new mongoose.Schema(
     },
     ipv6_address: {
       type: String,
-      required: true,
+      required: false,
     },
     platform_of_account: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Brand",
+      ref: 'Brand',
+      required: true,
     },
     certificate_count: {
       type: Number,
@@ -38,7 +42,7 @@ const userSchema = new mongoose.Schema(
     certificates: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Certificate",
+        ref: 'Certificate',
       },
     ],
   },
@@ -47,4 +51,52 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-export const User = mongoose.model("User", userSchema);
+userSchema.index({ emailId: 1, platform_of_account: 1 }, { unique: true });
+userSchema.index({ ipv4_address: 1, platform_of_account: 1 }, { unique: true });
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+});
+userSchema.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      fullName: this.fullName,
+    },
+    env.JWT_ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: env.JWT_ACCESS_TOKEN_SECRET_EXPIRES_IN,
+    }
+  );
+};
+
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+    },
+    env.JWT_REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: env.JWT_REFRESH_TOKEN_SECRET_EXPIRES_IN,
+    }
+  );
+};
+
+userSchema.methods.hashUserRole = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      role: roles.USER,
+    },
+    env.JWT_USER_ROLE_SECRET,
+    {
+      expiresIn: env.JWT_USER_ROLE_SECRET_EXPIRES_IN,
+    }
+  );
+};
+
+export const User = mongoose.model('User', userSchema);

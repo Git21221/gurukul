@@ -32,9 +32,6 @@ export const apiClient = async (
     }
 
     const fullUrl = `${base_url}/api/v1/${source}/${url}`;
-    console.log(base_url);
-
-    console.log(fullUrl);
 
     const resposne = await fetch(fullUrl, {
       method,

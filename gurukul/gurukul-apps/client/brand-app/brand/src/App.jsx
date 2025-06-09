@@ -1,15 +1,15 @@
-import { useEffect } from "react";
-import "./App.css";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { LandPage } from "./pages/LandPage";
-import { ValidateAuth } from "./components/ValidateAuth";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchBranding } from "./redux/api/brandDetailsAPI";
-import Login from "./pages/login/educator/Login";
-import ProtectedRoute from "./utils/ProtectedRoute";
-import AdminRoute from "./utils/AdminRoute";
-import EducatorRoute from "./utils/EducatorRoute";
-import UserRoute from "./utils/UserRoute";
+import { useEffect } from 'react';
+import './App.css';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { LandPage } from './pages/LandPage';
+import { ValidateAuth } from './components/ValidateAuth';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchBranding } from './redux/api/brandDetailsAPI';
+import Login from './pages/login/educator/Login';
+import ProtectedRoute from './utils/ProtectedRoute';
+import FounderRoute from './utils/FounderRoute';
+import EducatorRoute from './utils/EducatorRoute';
+import UserRoute from './utils/UserRoute';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
@@ -20,10 +20,10 @@ function App() {
   const location = useLocation();
   useEffect(() => {
     if (isAuthenticated) {
-      localStorage.setItem("lastRoute", location.pathname);
+      localStorage.setItem('lastRoute', location.pathname);
     }
   }, [location.pathname, isAuthenticated]);
-  const lastRoute = localStorage.getItem("lastRoute") || "/";
+  const lastRoute = localStorage.getItem('lastRoute') || '/';
 
   return (
     <div>
@@ -35,18 +35,26 @@ function App() {
           <Route
             path="/login/educator"
             element={
-              !isAuthenticated || userRole !== "educator" ? (
-                <Login />
-              ) : (
-                <Navigate to={"/"} replace />
-              )
+              !isAuthenticated ? <Login /> : <Navigate to={'/'} replace />
+            }
+          />
+          <Route
+            path="/login/user"
+            element={
+              !isAuthenticated ? <Login /> : <Navigate to={'/'} replace />
+            }
+          />
+          <Route
+            path="/login/founder"
+            element={
+              !isAuthenticated ? <Login /> : <Navigate to={'/'} replace />
             }
           />
           {/* protected routes */}
           <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
             {/* for admin routes */}
-            <Route element={<AdminRoute userRole={userRole} />}>
-              <Route path="/admin/home" element={<>Protected</>} />
+            <Route element={<FounderRoute userRole={userRole} />}>
+              <Route path="/founder/home" element={<>Protected</>} />
             </Route>
             {/* for educator routes */}
             <Route element={<EducatorRoute userRole={userRole} />}>
