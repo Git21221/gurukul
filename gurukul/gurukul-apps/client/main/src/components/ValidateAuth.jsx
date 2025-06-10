@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Outlet } from 'react-router-dom';
-import { verifyEducatorToken, verifyEducatorRole } from '../redux/api/authAPI';
+import { verifyFounderRole, verifyFounderToken } from '../redux/api/authAPI';
 
 export const ValidateAuth = () => {
   const dispatch = useDispatch();
@@ -10,8 +10,8 @@ export const ValidateAuth = () => {
   useEffect(() => {
     const validate = async () => {
       try {
-        await dispatch(verifyEducatorToken({ dispatch }));
-        await dispatch(verifyEducatorRole({ dispatch }));
+        await dispatch(verifyFounderRole({ dispatch }));
+        await dispatch(verifyFounderToken({ dispatch }));
       } catch (err) {
         console.error('Auth verification error:', err);
       } finally {

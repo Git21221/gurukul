@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import './App.css';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { LandPage } from './pages/LandPage';
+import { LandPage } from './pages/landPage/LandPage';
 import { ValidateAuth } from './components/ValidateAuth';
 import { useSelector } from 'react-redux';
-import Login from './pages/login';
+import { Login } from './pages/login/Login';
 import ProtectedRoute from './utils/ProtectedRoute';
 import FounderRoute from './utils/FounderRoute';
 

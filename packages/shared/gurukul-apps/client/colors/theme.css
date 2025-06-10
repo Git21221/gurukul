@@ -1,10 +1,11 @@
-:root{
+:root {
   --gurukul-primary-color: #4a90e2;
-  --gurukul-secondary-color-light: #91B3E829;
-  --gurukul-primary-text-color: #1E1E1E;
+  --gurukul-secondary-color-light: #91b3e829;
+  --gurukul-primary-text-color: #1e1e1e;
   --gurukul-primary-text-color-light: #848484;
-  --brand-bg-color: #F5F5F5;
-  --brand-course-box: #D8EAF2;
-  --danger-color: #BB2124;
-  --danger-bg-color: #EAAAAA29;
+  --brand-bg-color: #f5f5f5;
+  --gurukul-text-color-white: #f5f5f5;
+  --brand-course-box: #d8eaf2;
+  --danger-color: #bb2124;
+  --danger-bg-color: #eaaaaa29;
 }
