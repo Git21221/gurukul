@@ -1,20 +1,46 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import './App.css';
-import { Input } from '@gurukul/shared-client';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { LandPage } from './pages/LandPage';
+import { ValidateAuth } from './components/ValidateAuth';
+import { useSelector } from 'react-redux';
+import Login from './pages/login';
+import ProtectedRoute from './utils/ProtectedRoute';
+import FounderRoute from './utils/FounderRoute';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const { isAuthenticated, userRole } = useSelector((state) => state.auth);
+  const location = useLocation();
+  useEffect(() => {
+    if (isAuthenticated) {
+      localStorage.setItem('lastRoute', location.pathname);
+    }
+  }, [location.pathname, isAuthenticated]);
+  const lastRoute = localStorage.getItem('lastRoute') || '/';
 
   return (
-    <>
-      <h1>Welcome to our gurukul main website.</h1>
-      <div className="content">
-        <button onClick={() => alert('Button Clicked!')}>Click Me</button>
-        <p>Current count: {count}</p>
-        <button onClick={() => setCount(count + 1)}>Increase Count</button>
-      </div>
-      <Input />
-    </>
+    <div>
+      <Routes>
+        {/* not protected routes */}
+        <Route element={<ValidateAuth />}>
+          <Route path="/" element={<LandPage />} />
+          {/* <Route path="/signup/educator" element={<CheckToken />} /> */}
+          <Route
+            path="/login/founder"
+            element={
+              !isAuthenticated ? <Login /> : <Navigate to={'/'} replace />
+            }
+          />
+          {/* protected routes */}
+          <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+            {/* for admin routes */}
+            <Route element={<FounderRoute userRole={userRole} />}>
+              <Route path="/founder/home" element={<>Protected</>} />
+            </Route>
+          </Route>
+        </Route>
+      </Routes>
+    </div>
   );
 }
 

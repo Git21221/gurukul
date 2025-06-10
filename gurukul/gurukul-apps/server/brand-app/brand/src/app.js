@@ -8,6 +8,7 @@ import { playlistRouter } from './routes/playlist.route.js';
 import { videoRouter } from './routes/video.route.js';
 import { courseRouter } from './routes/course.routes.js';
 import { userRouter } from './routes/user.route.js';
+import { founderRouter } from './routes/founder.route.js';
 
 const app = express();
 const isDev = (env.ENVIRONMENT = 'development' === 'development');
@@ -33,6 +34,7 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(`/api/${env.SERVER_API_VERSION}/brand/educator`, educatorRouter);
+app.use(`/api/${env.SERVER_API_VERSION}/brand/founder`, founderRouter);
 app.use(`/api/${env.SERVER_API_VERSION}/brand/user`, userRouter);
 app.use(`/api/${env.SERVER_API_VERSION}/brand/playlist`, playlistRouter);
 app.use(`/api/${env.SERVER_API_VERSION}/brand/video`, videoRouter);

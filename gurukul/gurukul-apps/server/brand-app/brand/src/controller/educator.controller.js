@@ -144,7 +144,7 @@ const loginEducator = asyncFuncHandler(async (req, res) => {
   );
 
   return res
-    .status(200)
+    .status(statusCodes.OK)
     .cookie('refreshToken', refreshToken, refreshTokenOptions)
     .cookie('accessToken', accessToken, accessTokenOptions)
     .cookie('user_role', hashedUserRole, {
@@ -179,17 +179,17 @@ const verifyToken = asyncFuncHandler(async (req, res) => {
   }
 });
 
-const verifyRole = asyncFuncHandler(async (req, res, next) => {
+const verifyRole = asyncFuncHandler(async (req, res) => {
   const userRole = req?.cookies?.user_role;
   if (!userRole) {
     return error(
       statusCodes.UNAUTHORIZED,
-      'User role not found in cookies'
+      'Educator role not found in cookies'
     )(res);
   }
   try {
     const decodedRole = jwt.verify(userRole, env.JWT_USER_ROLE_SECRET);
-    return success(statusCodes.OK, 'User role is valid', decodedRole)(res);
+    return success(statusCodes.OK, 'Educator role is valid', decodedRole)(res);
   } catch (err) {
     return error(statusCodes.UNAUTHORIZED, 'Invalid or expired user role')(res);
   }

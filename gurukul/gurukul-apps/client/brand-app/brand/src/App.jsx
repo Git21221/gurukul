@@ -5,7 +5,7 @@ import { LandPage } from './pages/LandPage';
 import { ValidateAuth } from './components/ValidateAuth';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBranding } from './redux/api/brandDetailsAPI';
-import Login from './pages/login/educator/Login';
+import Login from './pages/login/Login';
 import ProtectedRoute from './utils/ProtectedRoute';
 import FounderRoute from './utils/FounderRoute';
 import EducatorRoute from './utils/EducatorRoute';
@@ -33,19 +33,7 @@ function App() {
           <Route path="/" element={<LandPage />} />
           {/* <Route path="/signup/educator" element={<CheckToken />} /> */}
           <Route
-            path="/login/educator"
-            element={
-              !isAuthenticated ? <Login /> : <Navigate to={'/'} replace />
-            }
-          />
-          <Route
-            path="/login/user"
-            element={
-              !isAuthenticated ? <Login /> : <Navigate to={'/'} replace />
-            }
-          />
-          <Route
-            path="/login/founder"
+            path="/login"
             element={
               !isAuthenticated ? <Login /> : <Navigate to={'/'} replace />
             }

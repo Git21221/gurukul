@@ -1,2 +1,2 @@
-@import "tailwindcss";
-@import '../../../../../packages/shared/gurukul-apps/client/colors/theme.scss';
+@import 'tailwindcss';
+@import '../../../../../packages/shared/gurukul-apps/client/colors/theme.css';
