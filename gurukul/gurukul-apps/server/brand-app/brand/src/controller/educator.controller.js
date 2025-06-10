@@ -191,7 +191,10 @@ const verifyRole = asyncFuncHandler(async (req, res) => {
     const decodedRole = jwt.verify(userRole, env.JWT_USER_ROLE_SECRET);
     return success(statusCodes.OK, 'Educator role is valid', decodedRole)(res);
   } catch (err) {
-    return error(statusCodes.UNAUTHORIZED, 'Invalid or expired user role')(res);
+    return error(
+      statusCodes.UNAUTHORIZED,
+      'Invalid or expired educator role'
+    )(res);
   }
 });
 

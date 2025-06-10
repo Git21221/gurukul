@@ -117,7 +117,10 @@ const verifyRole = asyncFuncHandler(async (req, res, next) => {
     const decodedRole = jwt.verify(userRole, env.JWT_USER_ROLE_SECRET);
     return success(statusCodes.OK, 'Founder role is valid', decodedRole)(res);
   } catch (err) {
-    return error(statusCodes.UNAUTHORIZED, 'Invalid or expired user role')(res);
+    return error(
+      statusCodes.UNAUTHORIZED,
+      'Invalid or expired founder role'
+    )(res);
   }
 });
 
