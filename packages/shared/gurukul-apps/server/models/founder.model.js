@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import env from "../../../../../env.js";
-import { roles } from "../../../../../gurukul/gurukul-apps/server/config/constants.js";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import env from '../../../../../env.js';
+import { roles } from '../../../../../gurukul/gurukul-apps/server/config/constants.js';
 
 const founderSchema = new mongoose.Schema(
   {
@@ -29,7 +29,7 @@ const founderSchema = new mongoose.Schema(
       type: String,
       required: false,
       trim: true,
-      enum: ["Marketing", "Finance", "Operations", "Technology", "Sales"],
+      enum: ['Marketing', 'Finance', 'Operations', 'Technology', 'Sales'],
     },
     years_of_experience: {
       type: Number,
@@ -87,8 +87,8 @@ const founderSchema = new mongoose.Schema(
   }
 );
 
-founderSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
+founderSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
     return next();
   }
   this.password = await bcrypt.hash(this.password, 10);
@@ -97,7 +97,7 @@ founderSchema.pre("save", async function (next) {
 
 founderSchema.methods.isPasswordCorrect = async function (password) {
   console.log(password, this.password);
-  
+
   return await bcrypt.compare(password, this.password);
 };
 
@@ -139,4 +139,4 @@ founderSchema.methods.hashUserRole = function () {
   );
 };
 
-export const Founder = mongoose.model("Founder", founderSchema);
+export const Founder = mongoose.model('Founder', founderSchema);

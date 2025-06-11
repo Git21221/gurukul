@@ -1,5 +1,8 @@
-import mongoose from "mongoose";
-import { roles } from "../../../../../gurukul/gurukul-apps/server/config/constants.js";
+import mongoose from 'mongoose';
+import { roles } from '../../../../../gurukul/gurukul-apps/server/config/constants.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import env from '../../../../../env.js';
 
 const mentorSchema = new mongoose.Schema(
   {
@@ -33,11 +36,11 @@ const mentorSchema = new mongoose.Schema(
     },
     referral: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Referral",
+      ref: 'Referral',
     },
     belongs_to_brand: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Brand",
+      ref: 'Brand',
     },
   },
   {
@@ -45,8 +48,8 @@ const mentorSchema = new mongoose.Schema(
   }
 );
 
-mentorSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
+mentorSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
     return next();
   }
   this.password = await bcrypt.hash(this.password, 10);
@@ -55,7 +58,7 @@ mentorSchema.pre("save", async function (next) {
 
 mentorSchema.methods.isPasswordCorrect = async function (password) {
   console.log(password, this.password);
-  
+
   return await bcrypt.compare(password, this.password);
 };
 
@@ -97,4 +100,4 @@ mentorSchema.methods.hashUserRole = function () {
   );
 };
 
-export const Mentor = mongoose.model("Mentor", mentorSchema);
+export const Mentor = mongoose.model('Mentor', mentorSchema);

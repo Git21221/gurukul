@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import env from "../../../../../env.js";
-import { roles } from "../../../../../gurukul/gurukul-apps/server/config/constants.js";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import env from '../../../../../env.js';
+import { roles } from '../../../../../gurukul/gurukul-apps/server/config/constants.js';
 
 const educatorSchema = new mongoose.Schema(
   {
@@ -36,12 +36,12 @@ const educatorSchema = new mongoose.Schema(
     },
     referral: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Referral",
+      ref: 'Referral',
       required: true,
     },
     belongs_to_brand: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Brand",
+      ref: 'Brand',
       required: true,
     },
   },
@@ -50,8 +50,8 @@ const educatorSchema = new mongoose.Schema(
   }
 );
 
-educatorSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
+educatorSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
     return next();
   }
   this.password = await bcrypt.hash(this.password, 10);
@@ -60,7 +60,7 @@ educatorSchema.pre("save", async function (next) {
 
 educatorSchema.methods.isPasswordCorrect = async function (password) {
   console.log(password, this.password);
-  
+
   return await bcrypt.compare(password, this.password);
 };
 
@@ -82,8 +82,7 @@ educatorSchema.methods.generateRefreshToken = function () {
     {
       _id: this._id,
     },
-    env
-    .JWT_REFRESH_TOKEN_SECRET,
+    env.JWT_REFRESH_TOKEN_SECRET,
     {
       expiresIn: env.JWT_REFRESH_TOKEN_SECRET_EXPIRES_IN,
     }
@@ -103,4 +102,4 @@ educatorSchema.methods.hashUserRole = function () {
   );
 };
 
-export const Educator = mongoose.model("Educator", educatorSchema);
+export const Educator = mongoose.model('Educator', educatorSchema);
