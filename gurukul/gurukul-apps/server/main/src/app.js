@@ -31,5 +31,8 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(`/api/${env.SERVER_API_VERSION}/main/founder`, founderRoutes);
 app.use(`/api/${env.SERVER_API_VERSION}/main/brand`, brandRouter);
+app.get('/', (_, res) => {
+  res.send('API is running');
+});
 
 export { app };
