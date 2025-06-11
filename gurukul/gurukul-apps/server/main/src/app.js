@@ -8,6 +8,7 @@ import { brandRouter } from './routes/brand.route.js';
 
 const app = express();
 const isDev = env.ENVIRONMENT === 'development';
+console.log(`Environment: ${env.ENVIRONMENT}, Is Development: ${isDev}`);
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, false);
