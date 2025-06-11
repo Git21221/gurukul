@@ -14,7 +14,7 @@ export const apiClient = async (
   try {
     // Show loader
     const env = import.meta.env.VITE_ENVIRONMENT;
-    console.log(import.meta.env);
+    console.log(import.meta.env.VITE_ENVIRONMENT);
 
     let base_url = '';
 

@@ -7,9 +7,13 @@ import { useSelector } from 'react-redux';
 import { Login } from './pages/login/Login';
 import ProtectedRoute from './utils/ProtectedRoute';
 import FounderRoute from './utils/FounderRoute';
+import { SignupForm } from './pages/signup/SignupForm';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
+  console.log('App isAuthenticated:', isAuthenticated);
+  console.log('App userRole:', userRole);
+
   const location = useLocation();
   useEffect(() => {
     if (isAuthenticated) {
@@ -24,7 +28,7 @@ function App() {
         {/* not protected routes */}
         <Route element={<ValidateAuth />}>
           <Route path="/" element={<LandPage />} />
-          {/* <Route path="/signup/educator" element={<CheckToken />} /> */}
+          <Route path="/signup/founder" element={<SignupForm />} />
           <Route
             path="/login/founder"
             element={

@@ -1,8 +1,9 @@
+import { apiClient } from '@gurukul/shared-client';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const verifyFounderToken = createAsyncThunk(
   'auth/verifyFounderToken',
-  async ({ dispatch, source = 'brand' }, { rejectWithValue }) => {
+  async ({ dispatch, source = 'main' }, { rejectWithValue }) => {
     try {
       const res = await apiClient(
         dispatch,
@@ -20,7 +21,7 @@ export const verifyFounderToken = createAsyncThunk(
 
 export const verifyFounderRole = createAsyncThunk(
   'auth/verifyFounderRole',
-  async ({ dispatch, source = 'brand' }, { rejectWithValue }) => {
+  async ({ dispatch, source = 'main' }, { rejectWithValue }) => {
     try {
       const res = await apiClient(
         dispatch,

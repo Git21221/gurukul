@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { verifyFounderRole, verifyFounderToken } from '../api/authAPI';
 
 const initialState = {
   founder: {},
@@ -32,7 +33,48 @@ const authSlice = createSlice({
       state.error = null;
     },
   },
-  extraReducers: (builder) => {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(verifyFounderToken.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(verifyFounderToken.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload.statusCode === 200) {
+          state.founder = action.payload.data;
+          state.isAuthenticated = true;
+          state.token = action.payload.token;
+          state.userRole = action.payload.role || '';
+        } else {
+          state.isAuthenticated = false;
+          state.error = action.payload.message || 'Token verification failed';
+          state.founder = {};
+        }
+      })
+      .addCase(verifyFounderToken.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.error = action.error.message || 'Token verification failed';
+        state.founder = {};
+      })
+      .addCase(verifyFounderRole.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(verifyFounderRole.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload.statusCode === 200) {
+          state.userRole = action.payload.role || '';
+        } else {
+          state.error = action.payload.message || 'Role verification failed';
+        }
+      })
+      .addCase(verifyFounderRole.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || 'Role verification failed';
+      });
+  },
 });
 
 export const { login, logout } = authSlice.actions;

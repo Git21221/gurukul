@@ -1,0 +1,16 @@
+.brand-title {
+  font-size: 1.875rem;
+  font-weight: 500;
+  color: transparent;
+  background-image: linear-gradient(
+    to right,
+    var(--gurukul-primary-color),
+    var(--gurukul-primary-color)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: 'Bruno Ace', sans-serif;
+}

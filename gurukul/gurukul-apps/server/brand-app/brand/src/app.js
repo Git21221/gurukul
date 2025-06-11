@@ -11,7 +11,7 @@ import { userRouter } from './routes/user.route.js';
 import { founderRouter } from './routes/founder.route.js';
 
 const app = express();
-const isDev = (env.ENVIRONMENT = 'development' === 'development');
+const isDev = env.ENVIRONMENT === 'development';
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, false);
