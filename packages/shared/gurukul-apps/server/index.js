@@ -1,6 +1,6 @@
 //all shared models
 import { Article } from './models/article.model.js';
-import { AudioMetaData } from './models/audioMetadata.model.js';
+import { AudioMetaData } from './models/audioMetaData.model.js';
 import { Brand } from './models/brand.model.js';
 import { BrandView } from './models/brandViews.model.js';
 import { Certificate } from './models/certificate.model.js';
