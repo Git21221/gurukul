@@ -14,8 +14,9 @@ const corsOptions = {
     if (isDev && origin.startsWith('http://localhost')) {
       return callback(null, true);
     }
+    const allowedOrigins = ['https://gurukul.click'];
     const allowedOriginRegex = /^https:\/\/[a-z0-9-]+\.gurukul\.click$/;
-    if (allowedOriginRegex.test(origin)) {
+    if (allowedOrigins.includes(origin) || allowedOriginRegex.test(origin)) {
       return callback(null, true);
     }
 
