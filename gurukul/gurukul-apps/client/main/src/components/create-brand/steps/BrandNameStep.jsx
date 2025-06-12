@@ -4,19 +4,19 @@ const BrandNameStep = ({ value, onChange }) => {
   return (
     <div className="space-y-6">
       <div>
-        <label
+        {/* <label
           htmlFor="brandName"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
           Brand Name
-        </label>
+        </label> */}
         <input
           type="text"
           id="brandName"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Enter your brand name..."
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-lg"
+          className="w-full px-6 py-7 rounded-full border text-gray-700 text-base placeholder-gray-400 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-[var(--gurukul-primary-color)] transition-all duration-200 border-gray-200 hover:border-gray-300"
           autoFocus
         />
       </div>

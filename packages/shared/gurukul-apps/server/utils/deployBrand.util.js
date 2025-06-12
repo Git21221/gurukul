@@ -9,6 +9,7 @@ import {
   CreateAppCommand,
   CreateBranchCommand,
   StartJobCommand,
+  UpdateBranchCommand,
 } from '@aws-sdk/client-amplify';
 
 const REPO_URL = 'https://github.com/Git21221/gurukul';
@@ -35,6 +36,7 @@ export const deployBrand = async ({
   brandColor,
   brandLogo, //base64 data URI
   founderName,
+  brandId,
 }) => {
   // Define paths for local processing
   const tempDir = path.resolve('/js projects/projects/gurukul/', brandName);
@@ -59,11 +61,13 @@ export const deployBrand = async ({
     let logoFileName = null;
 
     if (brandLogo.startsWith('data:image/')) {
-      const matches = brandLogo.match(/^data:image\/(\w+);base64,(.+)$/);
+      const matches = brandLogo.match(
+        /^data:image\/([a-zA-Z0-9.+-]+);base64,(.+)$/
+      );
       if (!matches) {
         throw new Error('Invalid base64 image format');
       }
-      const ext = matches[1];
+      const ext = matches[1].split('+')[0];
       const buffer = Buffer.from(matches[2], 'base64');
       logoFileName = `brand_logo.${ext}`;
       const logoPath = path.join(publicDir, logoFileName);
@@ -72,7 +76,7 @@ export const deployBrand = async ({
       console.log(`Brand logo saved as ${logoFileName}`);
     }
     console.log('Creating branding.json...');
-    const brandingData = { brandName, brandLogo, brandColor };
+    const brandingData = { brandName, brandLogo, brandColor, brandId };
     fs.writeFileSync(brandingFile, JSON.stringify(brandingData, null, 2));
 
     console.log('Committing & Pushing changes...');
@@ -83,7 +87,6 @@ export const deployBrand = async ({
       .add('.')
       .commit(`Added branding.json and logo for ${appName}`)
       .push('origin', appName);
-
     console.log('Creating new Amplify app...');
     const createAppCommand = new CreateAppCommand({
       name: appName,
@@ -118,6 +121,10 @@ export const deployBrand = async ({
     const createBranchCommand = new CreateBranchCommand({
       appId: amplifyApp.app.appId,
       branchName: appName,
+    });
+    const updateBranchCommand = new UpdateBranchCommand({
+      appId: amplifyApp.app.appId,
+      branchName: appName,
       environmentVariables: {
         VITE_ENVIRONMENT: 'production',
         VITE_MAIN_BASE_API_PROD_URL: 'https://app.gurukul.click',
@@ -127,6 +134,7 @@ export const deployBrand = async ({
       },
     });
     await amplify.send(createBranchCommand);
+    await amplify.send(updateBranchCommand);
 
     console.log('Starting build process...');
     const startJobCommand = new StartJobCommand({

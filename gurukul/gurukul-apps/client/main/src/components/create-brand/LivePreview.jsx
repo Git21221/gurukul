@@ -10,9 +10,18 @@ import {
   Search,
   ShoppingCart,
 } from 'lucide-react';
+import { useSelector } from 'react-redux';
 // import { BrandData } from './BrandWizard';
 
+function hexToRgba(hex, alpha = 1) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 const LivePreview = ({ brandData }) => {
+  const { founder } = useSelector((state) => state.auth);
   const getIconComponent = (iconName) => {
     const icons = {
       Star,
@@ -53,11 +62,11 @@ const LivePreview = ({ brandData }) => {
 
   return (
     <div
-      className="bg-white border rounded-xl shadow-lg overflow-hidden h-full"
+      className="bg-white rounded-xl shadow-lg overflow-hidden h-full"
       style={{ borderColor: brandData.color }}
     >
       <div
-        className="bg-gray-100 px-4 py-2 flex items-center space-x-2 border-b"
+        className="bg-gray-100 px-4 py-2 flex items-center space-x-2"
         style={{ borderColor: brandData.color }}
       >
         <div className="flex space-x-1">
@@ -67,16 +76,18 @@ const LivePreview = ({ brandData }) => {
         </div>
         <div className="flex-1 bg-white rounded px-3 py-1 text-sm text-gray-600">
           {brandData.name
-            ? `${brandData.name.toLowerCase().replace(/\s+/g, '')}.com`
-            : 'yourwebsite.com'}
+            ? `${brandData.name.toLowerCase().replace(/\s+/g, '')}-${founder.fullName.split(' ')[0].toLowerCase()}.gurukul.click`
+            : 'gurukul.click'}
         </div>
       </div>
 
       <div className="h-full">
         {/* Navigation */}
         <nav
-          style={{ borderColor: brandData.color }}
-          className="bg-white border-b px-6 py-4"
+          style={{
+            boxShadow: `0 3px 7px ${hexToRgba(brandData.color, 0.3)}`,
+          }}
+          className="bg-white px-6 py-4 shadow-lg"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -124,7 +135,10 @@ const LivePreview = ({ brandData }) => {
               </div>
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Welcome to {brandData.name || 'Your Brand'}
+              Welcome to{' '}
+              <span style={{ color: brandData.color }}>
+                {brandData.name || 'Your Brand'}
+              </span>
             </h1>
             <p className="text-xl text-gray-600 mb-8">
               Discover amazing products and services tailored just for you

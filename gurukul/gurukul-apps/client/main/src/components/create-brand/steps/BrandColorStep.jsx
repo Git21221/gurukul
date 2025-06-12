@@ -2,7 +2,7 @@ import React from 'react';
 
 const BrandColorStep = ({ color, onChange }) => {
   const predefinedColors = [
-    { name: 'Blue', value: '#3B82F6' },
+    { name: 'Blue', value: '#4A90E2' },
     { name: 'Indigo', value: '#6366F1' },
     { name: 'Purple', value: '#8B5CF6' },
     { name: 'Pink', value: '#EC4899' },
@@ -79,11 +79,11 @@ const BrandColorStep = ({ color, onChange }) => {
       </div>
 
       {/* Color Psychology */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <h3 className="font-semibold text-gray-900 mb-2">
+      <div className="bg-blue-50 rounded-lg p-4">
+        <h3 className="font-semibold text-blue-900 mb-2">
           Color Psychology Tips:
         </h3>
-        <ul className="text-sm text-gray-700 space-y-1">
+        <ul className="text-sm text-blue-800 space-y-1">
           <li>
             • <strong>Blue:</strong> Trust, reliability, professionalism
           </li>

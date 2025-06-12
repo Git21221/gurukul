@@ -76,12 +76,6 @@ const createBrand = asyncFuncHandler(async (req, res) => {
 
   //generate brand url
 
-  deployBrand({
-    brandName: name,
-    brandColor: color,
-    brandLogo: logo,
-    founderName,
-  });
   const brand = await Brand.create({
     name,
     logo,
@@ -95,6 +89,13 @@ const createBrand = asyncFuncHandler(async (req, res) => {
       'Failed to create brand for some unknown reason'
     )(res);
   }
+  deployBrand({
+    brandName: name,
+    brandColor: color,
+    brandLogo: logo,
+    founderName,
+    brandId: brand._id,
+  });
   return success(statusCodes.CREATED, 'Brand created successfully', brand)(res);
 });
 

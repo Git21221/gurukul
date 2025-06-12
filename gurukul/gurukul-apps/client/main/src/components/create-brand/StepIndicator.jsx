@@ -16,9 +16,9 @@ const StepIndicator = ({ currentStep, totalSteps }) => {
                 w-10 h-10 rounded-full flex items-center justify-center font-medium text-sm
                 ${
                   isCompleted
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-[var(--gurukul-primary-color)] text-white'
                     : isCurrent
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-[var(--gurukul-primary-color)] text-white'
                       : 'bg-gray-300 text-gray-600'
                 }
                 transition-all duration-300
@@ -31,7 +31,7 @@ const StepIndicator = ({ currentStep, totalSteps }) => {
               <div
                 className={`
                   w-16 h-0.5 mx-2
-                  ${stepNumber < currentStep ? 'bg-blue-600' : 'bg-gray-300'}
+                  ${stepNumber < currentStep ? 'bg-[var(--gurukul-primary-color)]' : 'bg-gray-300'}
                   transition-all duration-300
                 `}
               />

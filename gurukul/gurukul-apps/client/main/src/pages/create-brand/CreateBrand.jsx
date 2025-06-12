@@ -5,15 +5,23 @@ import BrandLogoStep from '../../components/create-brand/steps/BrandLogoStep';
 import BrandNameStep from '../../components/create-brand/steps/BrandNameStep';
 import LivePreview from '../../components/create-brand/LivePreview';
 import StepIndicator from '../../components/create-brand/StepIndicator';
+import { getSvgStringFromIconName } from '../../utils/iconToSvg';
+import { useDispatch, useSelector } from 'react-redux';
+import BrandSuccessModal from '../../components/create-brand/BrandSuccessModal';
+import { createBrand } from '../../redux/api/brandAPI';
 
 const CreateBrand = () => {
+  const [modalOpen, setModalOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [brandData, setBrandData] = useState({
     name: '',
     logo: null,
     logoType: 'icon',
-    color: '#3B82F6',
+    color: '#4A90E2',
   });
+  const { founder } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { brand_url } = useSelector((state) => state.brand);
 
   const totalSteps = 3;
 
@@ -104,13 +112,45 @@ const CreateBrand = () => {
   };
 
   const handleComplete = () => {
-    console.log('Brand created:', brandData);
+    if (brandData.logoType === 'icon') {
+      const svgString = getSvgStringFromIconName(
+        brandData.logo,
+        brandData.color
+      );
+      const base64 = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgString)))}`;
+      const data = {
+        name: brandData.name,
+        logo: base64,
+        color: brandData.color,
+        founderName: founder.fullName.split(' ')[0].toLowerCase(),
+      };
+      console.log('Brand Data:', data);
+      dispatch(createBrand({ dispatch, data })).then(() => {
+        setModalOpen(true);
+      });
+    } else {
+      const data = {
+        name: brandData.name,
+        logo: brandData.logo,
+        color: brandData.color,
+        founderName: founder.fullName.split(' ')[0].toLowerCase(),
+      };
+      console.log('Brand Data:', data);
+      // dispatch(createBrand({ dispatch, data })).then(() => {
+      //   setModalOpen(true);
+      // });
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <BrandSuccessModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        brandUrl={brand_url}
+      />
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="gurukul-logo text-3xl text-gray-900 uppercase">
             Gurukul
@@ -119,7 +159,7 @@ const CreateBrand = () => {
       </div>
 
       {/* Progress Indicator */}
-      <div className="bg-white border-b">
+      <div className="">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />
         </div>
@@ -135,7 +175,7 @@ const CreateBrand = () => {
 
           {/* Form Section */}
           <div className="order-1 lg:order-2 flex flex-col">
-            <div className="bg-white rounded-xl shadow-sm border p-8 flex-1">
+            <div className="p-8 flex-1">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   {getStepTitle()}
@@ -146,7 +186,7 @@ const CreateBrand = () => {
               <div className="flex-1">{renderStep()}</div>
 
               {/* Navigation */}
-              <div className="flex justify-between items-center mt-8 pt-6 border-t">
+              <div className="flex justify-between items-center mt-8 pt-6">
                 <button
                   onClick={prevStep}
                   disabled={currentStep === 1}
@@ -165,7 +205,7 @@ const CreateBrand = () => {
                     currentStep === totalSteps ? handleComplete : nextStep
                   }
                   disabled={!canProceed()}
-                  className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                  className="flex items-center px-6 py-3 rounded-lg  disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium bg-[#4A90E2] text-white hover:opacity-90 focus:ring-[#4A90E2]"
                 >
                   {currentStep === totalSteps ? 'Complete' : 'Next'}
                   <ChevronRight className="w-4 h-4 ml-1" />

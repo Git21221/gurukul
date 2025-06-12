@@ -1,4 +1,4 @@
-// utils/iconToSvg.js
+import React from 'react';
 import { Heart, Star, Zap, Shield, Crown, Gem } from 'lucide-react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
