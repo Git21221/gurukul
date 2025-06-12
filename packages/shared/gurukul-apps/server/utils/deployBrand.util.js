@@ -133,6 +133,13 @@ export const deployBrand = async ({
     const createBranchCommand = new CreateBranchCommand({
       appId: amplifyApp.app.appId,
       branchName: appName,
+      environmentVariables: {
+        VITE_ENVIRONMENT: 'production',
+        VITE_MAIN_BASE_API_PROD_URL: 'https://app.gurukul.click',
+        VITE_BRAND_BASE_API_PROD_URL: 'https://brand.gurukul.click',
+        VITE_MAIN_SERVER_PORT: '4000',
+        VITE_BRAND_SERVER_PORT: '4001',
+      },
     });
     await amplify.send(createBranchCommand);
 
