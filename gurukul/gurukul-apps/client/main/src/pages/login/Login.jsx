@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { loginFounder } from '../../redux/api/founderAPI';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const updateFormData = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -55,8 +57,9 @@ export const Login = () => {
           dispatch,
           data: formData,
         })
-      );
-      // navigate('/dashboard');
+      ).then((res) => {
+        navigate('/');
+      });
     } catch (error) {
     } finally {
       setIsSubmitting(false);

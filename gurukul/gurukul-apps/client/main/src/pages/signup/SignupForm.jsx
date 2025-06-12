@@ -5,6 +5,9 @@ import { InputField } from '../../components/common/InputField';
 import { ModernIllustration } from '../../components/signup/ModernIllustration';
 import { Stepper } from '../../components/signup/Stepper';
 import './signupForm.css';
+import { useDispatch } from 'react-redux';
+import { registerFounder } from '../../redux/api/founderAPI';
+import { useNavigate } from 'react-router-dom';
 
 const steps = [
   { id: 1, title: 'Name' },
@@ -13,6 +16,8 @@ const steps = [
 ];
 
 export const SignupForm = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -89,15 +94,23 @@ export const SignupForm = () => {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
-      alert(
-        '🎉 Welcome to GURUKUL! Your account has been created successfully.'
-      );
+    const data = {
+      fullName: formData.fullName.trim(),
+      email: formData.email.trim(),
+      password: formData.password,
+    };
+    dispatch(registerFounder({ dispatch, data })).then((res) => {
       setIsSubmitting(false);
-    }, 2000);
+      if (res.error) {
+        // Handle error
+        console.error('Registration failed:', res.error.message);
+        return;
+      }
+      // Registration successful, redirect or show success message
+      console.log('Registration successful:', res.payload);
+      // Redirect to dashboard or next step
+      navigate('/login/founder');
+    });
   };
 
   const getStepDirection = (stepId) => {

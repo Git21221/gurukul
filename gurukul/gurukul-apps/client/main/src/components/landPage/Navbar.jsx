@@ -12,6 +12,8 @@ const publicLinks = [
 
 const Navbar = () => {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
+  console.log('Navbar userRole:', userRole);
+  console.log('Navbar isAuthenticated:', isAuthenticated);
 
   const links =
     isAuthenticated && navLinksByRole[userRole]

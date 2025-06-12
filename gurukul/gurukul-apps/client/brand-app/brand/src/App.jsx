@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { LandPage } from './pages/LandPage';
@@ -10,13 +10,19 @@ import ProtectedRoute from './utils/ProtectedRoute';
 import FounderRoute from './utils/FounderRoute';
 import EducatorRoute from './utils/EducatorRoute';
 import UserRoute from './utils/UserRoute';
+import { Helmet } from 'react-helmet';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
+  const [branding, setBranding] = useState({});
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchBranding());
+    dispatch(fetchBranding()).then((data) => {
+      console.log('Branding Data Fetched:', data);
+      setBranding(data.payload);
+    });
   }, []);
+  // console.log('Branding Data:', branding);
   const location = useLocation();
   useEffect(() => {
     if (isAuthenticated) {
@@ -27,6 +33,9 @@ function App() {
 
   return (
     <div>
+      <Helmet>
+        <title>{branding?.brandName}</title>
+      </Helmet>
       <Routes>
         {/* not protected routes */}
         <Route element={<ValidateAuth />}>

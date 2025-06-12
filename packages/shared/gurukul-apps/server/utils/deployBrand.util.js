@@ -76,7 +76,7 @@ export const deployBrand = async ({
       console.log(`Brand logo saved as ${logoFileName}`);
     }
     console.log('Creating branding.json...');
-    const brandingData = { brandName, brandLogo, brandColor, brandId };
+    const brandingData = { brandName, brandColor, brandId };
     fs.writeFileSync(brandingFile, JSON.stringify(brandingData, null, 2));
 
     console.log('Committing & Pushing changes...');

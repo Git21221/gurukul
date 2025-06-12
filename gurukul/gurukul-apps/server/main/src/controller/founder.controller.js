@@ -101,6 +101,13 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
   const loggedInFounder = await Founder.findById(founder._id).select(
     '-password'
   );
+  let responseFounder = null;
+  if (loggedInFounder) {
+    responseFounder = {
+      ...loggedInFounder.toObject(),
+      role: 'founder',
+    };
+  }
 
   return res
     .status(200)
@@ -115,7 +122,7 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
       new apiResponseHandler(
         200,
         'Founder logged in successfully',
-        loggedInFounder
+        responseFounder
       )
     );
 });

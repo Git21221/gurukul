@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { verifyFounderRole, verifyFounderToken } from '../api/authAPI';
+import { loginFounder } from '../api/founderAPI';
 
 const initialState = {
   founder: {},
@@ -73,6 +74,30 @@ const authSlice = createSlice({
       .addCase(verifyFounderRole.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Role verification failed';
+      })
+      .addCase(loginFounder.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(loginFounder.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload.statusCode === 200) {
+          state.founder = action.payload.data;
+          state.isAuthenticated = true;
+          state.token = action.payload.token;
+          state.userRole = action.payload.data.role || '';
+        } else {
+          state.isAuthenticated = false;
+          state.error = action.payload.message || 'Login failed';
+          state.founder = {};
+        }
+      })
+      .addCase(loginFounder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.error = action.error.message || 'Login failed';
+        state.founder = {};
       });
   },
 });
