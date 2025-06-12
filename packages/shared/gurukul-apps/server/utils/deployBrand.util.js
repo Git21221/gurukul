@@ -75,21 +75,6 @@ export const deployBrand = async ({
     const brandingData = { brandName, brandLogo, brandColor };
     fs.writeFileSync(brandingFile, JSON.stringify(brandingData, null, 2));
 
-    const envfilePath = path.join(
-      tempDir,
-      'gurukul/gurukul-apps/client/brand-app/brand/.env'
-    );
-
-    const envContent = `
-    VITE_ENVIRONMENT=production
-    VITE_MAIN_BASE_API_PROD_URL=https://app.gurukul.click
-    VITE_BRAND_BASE_API_PROD_URL=https://brand.gurukul.click
-    VITE_MAIN_SERVER_PORT=4000
-    VITE_BRAND_SERVER_PORT=4001
-    `;
-    fs.writeFileSync(envfilePath, envContent.trim());
-    console.log('Environment file created at:', envfilePath);
-
     console.log('Committing & Pushing changes...');
     await git
       .cwd(tempDir)
