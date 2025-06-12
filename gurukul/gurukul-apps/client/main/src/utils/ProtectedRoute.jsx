@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 function ProtectedRoute({ isAuthenticated }) {
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login/founder" replace />;
   } else return <Outlet />;
 }
 

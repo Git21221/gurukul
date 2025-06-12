@@ -14,6 +14,8 @@ import {
   Zap,
 } from 'lucide-react';
 import './landpage.css';
+import Navbar from '../../components/landPage/Navbar';
+import { Link } from 'react-router-dom';
 
 export const LandPage = () => {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
@@ -22,40 +24,13 @@ export const LandPage = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              {/* <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
-              </div> */}
-              <span className="gurukul-logo text-3xl text-gray-900 uppercase">
-                Gurukul
-              </span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="nav-link">
-                Features
-              </a>
-              <a href="#how-it-works" className="nav-link">
-                How it Works
-              </a>
-              <a href="#pricing" className="nav-link">
-                Pricing
-              </a>
-              <button className="nav-button text-white px-4 py-2 rounded-lg transition-colors">
-                Get Started
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-blue-50 via-white to-emerald-50 py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold text-[var(--gurukul-primary-text-color)] mb-6 leading-tight">
               Create Your Own
               <span className="gradient-text ">Educational Brand</span>
             </h1>
@@ -65,10 +40,10 @@ export const LandPage = () => {
               monetize your expertise with complete creative control.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button className="cta-button">
+              <Link className="cta-button" to={'/founder/create-brand'}>
                 Start Building Your Brand
                 <ArrowRight className="w-5 h-5 ml-2 inline" />
-              </button>
+              </Link>
               <button className="demo-button">
                 <Play className="w-5 h-5 mr-2 inline" />
                 Watch Demo

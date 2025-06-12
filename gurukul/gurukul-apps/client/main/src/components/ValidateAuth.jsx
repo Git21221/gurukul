@@ -10,8 +10,8 @@ export const ValidateAuth = () => {
   useEffect(() => {
     const validate = async () => {
       try {
-        await dispatch(verifyFounderRole({ dispatch }));
         await dispatch(verifyFounderToken({ dispatch }));
+        await dispatch(verifyFounderRole({ dispatch }));
       } catch (err) {
         console.error('Auth verification error:', err);
       } finally {

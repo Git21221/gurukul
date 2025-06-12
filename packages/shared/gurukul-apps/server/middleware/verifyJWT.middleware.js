@@ -51,10 +51,10 @@ const verifyJWT = asyncFuncHandler(async (req, res, next) => {
     let user = null;
     switch (role) {
       case roles.FOUNDER:
-        const user = await Founder.findById(decodedToken._id).select(
+        const founder = await Founder.findById(decodedToken._id).select(
           '-password'
         );
-        if (!user) {
+        if (!founder) {
           return res
             .status(401)
             .json(
@@ -64,6 +64,7 @@ const verifyJWT = asyncFuncHandler(async (req, res, next) => {
               )
             );
         }
+        user = founder;
         break;
       case roles.EDUCATOR:
         const educator = await Educator.findById(decodedToken._id).select(
@@ -81,7 +82,7 @@ const verifyJWT = asyncFuncHandler(async (req, res, next) => {
         }
         user = educator;
         break;
-      case roles.USER:
+      default:
         const actualUser = await User.findById(decodedToken._id).select(
           '-password'
         );
@@ -95,6 +96,8 @@ const verifyJWT = asyncFuncHandler(async (req, res, next) => {
         user = actualUser;
         break;
     }
+    console.log(`User found: ${user}, Role: ${role}`);
+
     req.user = user;
     next();
   } catch (error) {

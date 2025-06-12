@@ -65,7 +65,7 @@ const authSlice = createSlice({
       .addCase(verifyFounderRole.fulfilled, (state, action) => {
         state.isLoading = false;
         if (action.payload.statusCode === 200) {
-          state.userRole = action.payload.role || '';
+          state.userRole = action.payload.data.role || '';
         } else {
           state.error = action.payload.message || 'Role verification failed';
         }

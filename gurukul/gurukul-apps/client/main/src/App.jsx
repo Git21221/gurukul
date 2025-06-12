@@ -8,6 +8,7 @@ import { Login } from './pages/login/Login';
 import ProtectedRoute from './utils/ProtectedRoute';
 import FounderRoute from './utils/FounderRoute';
 import { SignupForm } from './pages/signup/SignupForm';
+import CreateBrand from './pages/create-brand/CreateBrand';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
@@ -40,6 +41,7 @@ function App() {
             {/* for admin routes */}
             <Route element={<FounderRoute userRole={userRole} />}>
               <Route path="/founder/home" element={<>Protected</>} />
+              <Route path="/founder/create-brand" element={<CreateBrand />} />
             </Route>
           </Route>
         </Route>

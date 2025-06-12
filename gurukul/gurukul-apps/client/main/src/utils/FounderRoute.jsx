@@ -5,7 +5,7 @@ function AdminRoute({ userRole }) {
   if (userRole === 'founder') {
     return <Outlet />;
   }
-  return <Navigate to="/login" replace />;
+  return <Navigate to="/login/founder" replace />;
 }
 
 export default AdminRoute;

@@ -5,6 +5,7 @@ import { ArticleLogo } from './components/sidebar/ArticleLogo.jsx';
 import { CourseLogo } from './components/sidebar/CourseLogo.jsx';
 import { BurgerMenu } from './components/sidebar/BurgerMenu.jsx';
 import { UpdatesLogo } from './components/sidebar/UpdatesLogo.jsx';
+import { navLinksByRole } from './constants/navLinksByRoles.js';
 
 export {
   Input,
@@ -14,4 +15,5 @@ export {
   CourseLogo,
   BurgerMenu,
   UpdatesLogo,
+  navLinksByRole,
 };
