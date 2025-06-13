@@ -23,6 +23,7 @@ jobs:
       - name: Deploy to EC2 and restart server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            set -e
             cd ~/gurukul
 
             echo "Pulling latest changes from main branch"
@@ -30,7 +31,7 @@ jobs:
             git clean -fd
             git pull origin main
 
-            # Kill any existing server on port 4000
+            echo "Killing any existing server on port 4000"
             PID=$(lsof -t -i:4000)
             if [ -n "$PID" ]; then
               echo "Killing process on port 4000 (PID: $PID)"
@@ -38,12 +39,18 @@ jobs:
             fi
 
             echo "Installing dependencies"
+            pnpm install
 
-            # Export environment
+            echo "Approving build scripts"
+            pnpm approve-builds || echo "No build scripts to approve or already approved."
+
+            echo "Starting the server"
             export NODE_ENV=production
+            pnpm --filter ./gurukul/gurukul-apps/server/main dev:server:main > server.log 2>&1 &
 
-            # Start server and log
-            pnpm install && pnpm --filter ./gurukul/gurukul-apps/server/main dev:server:main > server.log 2>&1 &
+            echo "Last few lines of server.log:"
+            sleep 3
+            tail -n 20 server.log
 
             echo "Deployment script finished."
           EOF
