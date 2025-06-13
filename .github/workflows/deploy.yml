@@ -37,6 +37,8 @@ jobs:
               kill -9 $PID
             fi
 
+            echo "Installing dependencies"
+
             # Export environment
             export NODE_ENV=production
 
