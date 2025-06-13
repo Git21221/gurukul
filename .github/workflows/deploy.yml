@@ -1,36 +1,36 @@
-name: Deploy Backend to EC2
+name: Deploy to EC2
 
 on:
   push:
     branches:
       - main
-    # paths:
-    #   - 'gurukul/gurukul-apps/server/main/**'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up SSH key
+      - name: Set up SSH
         run: |
-          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ec2_key.pem
-          chmod 600 ec2_key.pem
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" | base64 -d > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy to EC2
+      - name: Deploy to EC2 and restart server
         run: |
-          ssh -o StrictHostKeyChecking=no -i ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            echo "Connecting to EC2..."
-
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ~/gurukul
 
             echo "Pulling latest changes from main branch"
+            git reset --hard HEAD
+            git clean -fd
             git pull origin main
 
-            echo "Killing any existing server on port 4000"
+            # Kill any existing server on port 4000
             PID=$(lsof -t -i:4000)
             if [ -n "$PID" ]; then
               echo "Killing process on port 4000 (PID: $PID)"
@@ -38,10 +38,12 @@ jobs:
             fi
 
             echo "Installing dependencies"
-            pnpm install
 
-            echo "Starting backend server in background"
-            pnpm run dev:server:main > server.log 2>&1 &
+            # Export environment
+            export NODE_ENV=production
 
-            echo "Deployment complete"
+            # Start server and log
+            pnpm install && pnpm --filter ./gurukul/gurukul-apps/server/main dev:server:main > server.log 2>&1 &
+
+            echo "Deployment script finished."
           EOF
