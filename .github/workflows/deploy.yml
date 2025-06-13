@@ -25,6 +25,11 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ~/gurukul
 
+            echo "Pulling latest changes from main branch"
+            git reset --hard HEAD
+            git clean -fd
+            git pull origin main
+
             # Kill any existing server on port 4000
             PID=$(lsof -t -i:4000)
             if [ -n "$PID" ]; then
