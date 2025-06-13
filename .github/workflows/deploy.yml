@@ -26,31 +26,31 @@ jobs:
             set -e
             cd ~/gurukul
 
-            echo "Pulling latest changes from main branch"
+            echo "Resetting and pulling latest changes"
             git reset --hard HEAD
             git clean -fd
             git pull origin main
-
-            echo "Killing any existing server on port 4000"
-            PID=$(lsof -t -i:4000)
-            if [ -n "$PID" ]; then
-              echo "Killing process on port 4000 (PID: $PID)"
-              kill -9 $PID
-            fi
 
             echo "Installing dependencies"
             pnpm install
 
             echo "Approving build scripts"
-            pnpm approve-builds || echo "No build scripts to approve or already approved."
+            pnpm approve-builds || echo "No scripts to approve"
 
-            echo "Starting the server"
+            echo "Killing any existing process on port 4000"
+            PID=$(lsof -t -i:4000)
+            if [ -n "$PID" ]; then
+              echo "Killing PID $PID"
+              kill -9 $PID
+            fi
+
+            echo "Starting server in background"
             export NODE_ENV=production
             pnpm --filter ./gurukul/gurukul-apps/server/main dev:server:main > server.log 2>&1 &
 
-            echo "Last few lines of server.log:"
             sleep 3
+            echo "Last few lines from server.log:"
             tail -n 20 server.log
 
-            echo "Deployment script finished."
+            echo "✅ Deployment complete"
           EOF
