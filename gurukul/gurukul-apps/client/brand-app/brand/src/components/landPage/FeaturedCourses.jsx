@@ -83,14 +83,14 @@ const FeaturedCourses = () => {
           {courses.map((course) => (
             <div
               key={course.id}
-              className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105 group"
+              className="bg-white flex flex-col rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:transform hover:scale-105 group"
             >
-              {/* Course Image */}
-              <div className="relative overflow-hidden">
+              {/* Image Section - Fixed Height */}
+              <div className="relative overflow-hidden h-48">
                 <img
                   src={course.image}
                   alt={course.title}
-                  className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 <div className="absolute top-4 left-4">
@@ -111,38 +111,40 @@ const FeaturedCourses = () => {
                     className="w-12 h-12 rounded-full flex items-center justify-center"
                     style={{ backgroundColor: branding.brandColor }}
                   >
-                    <Play className="h-6 w-6 text-white ml-1" />
+                    <Play className="h-6 w-6 text-white" />
                   </div>
                 </div>
               </div>
 
-              {/* Course Content */}
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                  {course.title}
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  by {course.instructor}
-                </p>
+              {/* Content Section - Flexible */}
+              <div className="p-6 flex flex-col flex-1">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                    {course.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    by {course.instructor}
+                  </p>
 
-                {/* Course Stats */}
-                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="font-medium">{course.rating}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Users className="h-4 w-4" />
-                    <span>{course.students.toLocaleString()}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Clock className="h-4 w-4" />
-                    <span>{course.duration}</span>
+                  {/* Course Stats */}
+                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      <span className="font-medium">{course.rating}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Users className="h-4 w-4" />
+                      <span>{course.students.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Clock className="h-4 w-4" />
+                      <span>{course.duration}</span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Price and CTA */}
-                <div className="flex items-center justify-between">
+                {/* Price and CTA - Always at bottom */}
+                <div className="flex items-center justify-between pt-2 mt-auto">
                   <div className="flex items-center space-x-2">
                     <span className="text-2xl font-bold text-gray-900">
                       ${course.price}

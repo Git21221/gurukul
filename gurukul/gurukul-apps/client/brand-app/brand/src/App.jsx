@@ -11,6 +11,8 @@ import FounderRoute from './utils/FounderRoute';
 import EducatorRoute from './utils/EducatorRoute';
 import UserRoute from './utils/UserRoute';
 import { Helmet } from 'react-helmet';
+import DashboardLayout from './components/DashboardLayout';
+import PublicLayout from './components/PublicLayout';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
@@ -39,27 +41,43 @@ function App() {
       <Routes>
         {/* not protected routes */}
         <Route element={<ValidateAuth />}>
-          <Route path="/" element={<LandPage />} />
-          {/* <Route path="/signup/educator" element={<CheckToken />} /> */}
-          <Route
-            path="/login"
-            element={
-              !isAuthenticated ? <Login /> : <Navigate to={'/'} replace />
-            }
-          />
-          {/* protected routes */}
-          <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
-            {/* for admin routes */}
-            <Route element={<FounderRoute userRole={userRole} />}>
-              <Route path="/founder/home" element={<>Protected</>} />
-            </Route>
-            {/* for educator routes */}
-            <Route element={<EducatorRoute userRole={userRole} />}>
-              <Route path="/educator/home" element={<>Protected</>} />
-            </Route>
-            {/* for student routes */}
-            <Route element={<UserRoute userRole={userRole} />}>
-              <Route path="/user/home" element={<>Protected</>} />
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<LandPage />} />
+            {/* <Route path="/signup/educator" element={<CheckToken />} /> */}
+            <Route
+              path="/login"
+              element={
+                !isAuthenticated ? <Login /> : <Navigate to={'/'} replace />
+              }
+            />
+            {/* protected routes */}
+            <Route
+              element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
+            >
+              {/* for admin routes */}
+              <Route element={<FounderRoute userRole={userRole} />}>
+                <Route element={<DashboardLayout />}>
+                  <Route
+                    path="/founder/home"
+                    element={<div>Founder Home</div>}
+                  />
+                </Route>
+              </Route>
+              {/* for educator routes */}
+              <Route element={<EducatorRoute userRole={userRole} />}>
+                <Route element={<DashboardLayout />}>
+                  <Route
+                    path="/educator/home"
+                    element={<div>Educator Home</div>}
+                  />
+                </Route>
+              </Route>
+              {/* for student routes */}
+              <Route element={<UserRoute userRole={userRole} />}>
+                <Route element={<DashboardLayout />}>
+                  <Route path="/user/home" element={<div>user Home</div>} />
+                </Route>
+              </Route>
             </Route>
           </Route>
         </Route>

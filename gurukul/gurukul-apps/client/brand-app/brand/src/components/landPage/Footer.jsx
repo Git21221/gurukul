@@ -14,6 +14,13 @@ import { useSelector } from 'react-redux';
 
 const Footer = () => {
   const { branding } = useSelector((state) => state.brandDetails);
+  const [src, setSrc] = useState('/brand_logo.svg');
+
+  const handleError = () => {
+    if (src.endsWith('.svg')) setSrc('/brand_logo.png');
+    else if (src.endsWith('.png')) setSrc('/brand_logo.jpg');
+    else setSrc('/brand_logo.jpeg');
+  };
 
   const footerLinks = {
     company: [
@@ -67,7 +74,9 @@ const Footer = () => {
                   className="p-2 rounded-lg"
                   style={{ backgroundColor: `${branding.brandColor}20` }}
                 >
-                  <BookOpen
+                  <img
+                    src={src}
+                    onError={handleError}
                     className="h-6 w-6"
                     style={{ color: branding.brandColor }}
                   />
@@ -76,7 +85,7 @@ const Footer = () => {
                   className="text-xl font-bold"
                   style={{ color: branding.brandColor }}
                 >
-                  {branding.brandName} Academy
+                  {branding.brandName}
                 </span>
               </div>
 
@@ -204,7 +213,7 @@ const Footer = () => {
         <div className="py-6 border-t border-gray-800">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="text-gray-300 text-sm">
-              © 2024 {branding.brandName} Academy. All rights reserved.
+              © 2024 {branding.brandName}. All rights reserved.
             </div>
 
             {/* Social Links */}

@@ -24,7 +24,7 @@ export const LandPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      {/* <Header /> */}
       <main>
         <Hero />
         <FeaturedCourses />
