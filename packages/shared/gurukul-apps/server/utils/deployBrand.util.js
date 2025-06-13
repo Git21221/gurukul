@@ -14,6 +14,7 @@ import {
 
 // Inject GitHub token into clone URL (safe for CI/CD)
 const REPO_URL = `https://x-access-token:${env.GITHUB_OAUTH_TOKEN_AMPLIFY}@github.com/Git21221/gurukul.git`;
+const ACTUAL_REPO_URL = 'https://github.com/git21221/gurukul.git';
 
 const amplify = new AmplifyClient({ region: 'ap-south-1' });
 const git = simpleGit();
@@ -93,7 +94,7 @@ export const deployBrand = async ({
     console.log('Creating new Amplify app...');
     const createAppCommand = new CreateAppCommand({
       name: appName,
-      repository: REPO_URL,
+      repository: ACTUAL_REPO_URL,
       defaultBranch: appName,
       oauthToken: env.GITHUB_OAUTH_TOKEN_AMPLIFY,
       platform: 'WEB',
