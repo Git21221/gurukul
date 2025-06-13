@@ -43,5 +43,7 @@ jobs:
             export NODE_ENV=production
 
             # Start server and log
-            pnpm --filter ./gurukul/gurukul-apps/server/main dev:server:main > server.log 2>&1 &
+            pnpm install && pnpm --filter ./gurukul/gurukul-apps/server/main dev:server:main > server.log 2>&1 &
+
+            echo "Deployment script finished."
           EOF
