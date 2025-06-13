@@ -12,7 +12,9 @@ import {
   UpdateBranchCommand,
 } from '@aws-sdk/client-amplify';
 
-const REPO_URL = 'https://github.com/Git21221/gurukul';
+// Inject GitHub token into clone URL (safe for CI/CD)
+const REPO_URL = `https://x-access-token:${env.GITHUB_OAUTH_TOKEN_AMPLIFY}@github.com/Git21221/gurukul.git`;
+
 const amplify = new AmplifyClient({ region: 'ap-south-1' });
 const git = simpleGit();
 
