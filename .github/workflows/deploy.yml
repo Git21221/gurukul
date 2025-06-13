@@ -26,8 +26,8 @@ jobs:
             cd ~/gurukul
 
             echo "Pulling latest changes from main branch"
-            git reset --hard HEAD
-            git clean -fd
+            # git reset --hard HEAD
+            # git clean -fd
             git pull origin main
 
             # Kill any existing server on port 4000
@@ -43,7 +43,7 @@ jobs:
             export NODE_ENV=production
 
             # Start server and log
-            pnpm install && pnpm --filter ./gurukul/gurukul-apps/server/main dev:server:main > server.log 2>&1 &
+            pnpm run dev:server:main > server.log 2>&1 &
 
             echo "Deployment script finished."
           EOF
