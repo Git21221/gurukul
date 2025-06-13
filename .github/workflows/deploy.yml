@@ -25,21 +25,15 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ~
             
-            # Clone repo if missing
             if [ ! -d "gurukul/.git" ]; then
               echo "Repository not found. Cloning again..."
               rm -rf gurukul
               git clone https://github.com/Git21221/gurukul.git gurukul
-            else
-              echo "Repository exists. Pulling latest changes..."
-              cd gurukul
-              git pull origin main
             fi
 
             cd gurukul
-
-            echo "Installing dependencies"
-            pnpm install
+            echo "Pulling latest changes from main branch"
+            git pull origin main
 
             # Kill any existing server on port 4000
             PID=$(lsof -t -i:4000)
@@ -48,8 +42,11 @@ jobs:
               kill -9 $PID
             fi
 
-            echo "Starting server"
+            echo "Installing dependencies"
             export NODE_ENV=production
+            pnpm install
+
+            echo "Starting server"
             pnpm run dev:server:main > server.log 2>&1 &
 
             echo "Deployment complete"
