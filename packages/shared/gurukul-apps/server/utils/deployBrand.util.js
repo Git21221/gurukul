@@ -40,7 +40,7 @@ export const deployBrand = async ({
 }) => {
   // Define paths for local processing
   const tempDir = path.join(process.cwd(), 'temp', brandName);
-  console.log(`Temporary directory: ${tempDir}`);
+  console.log(`Temporary directory: ${tempDir} w`);
   const publicDir = path.join(
     tempDir,
     'gurukul/gurukul-apps/client/brand-app/brand/public'
