@@ -39,7 +39,8 @@ export const deployBrand = async ({
   brandId,
 }) => {
   // Define paths for local processing
-  const tempDir = path.resolve('/js projects/projects/gurukul/', brandName);
+  const tempDir = path.join(process.cwd(), 'temp', brandName);
+
   const publicDir = path.join(
     tempDir,
     'gurukul/gurukul-apps/client/brand-app/brand/public'
