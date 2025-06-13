@@ -121,7 +121,7 @@ const Hero = () => {
               </div>
 
               {/* Floating Course Cards */}
-              <div className="absolute -top-4 -right-4 bg-white rounded-lg shadow-lg p-4 max-w-xs hidden lg:block">
+              <div className="absolute top-0 right-0 bg-white rounded-bl-lg shadow-lg p-4 max-w-xs hidden lg:block">
                 <div className="flex items-center space-x-3">
                   <div
                     className="w-12 h-12 rounded-lg flex items-center justify-center"
@@ -139,7 +139,7 @@ const Hero = () => {
                 </div>
               </div>
 
-              <div className="absolute -bottom-4 -left-4 bg-white rounded-lg shadow-lg p-4 max-w-xs hidden lg:block">
+              <div className="absolute bottom-0 left-0 bg-white rounded-tr-lg shadow-lg p-4 max-w-xs hidden lg:block">
                 <div className="flex items-center space-x-3">
                   <div
                     className="w-12 h-12 rounded-lg flex items-center justify-center"

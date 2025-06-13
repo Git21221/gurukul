@@ -163,10 +163,10 @@ const Pricing = () => {
 
                 {/* CTA Button */}
                 <button
-                  className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105 ${
+                  className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105 hover:text-white ${
                     plan.popular
                       ? 'text-white shadow-lg'
-                      : 'border-2 text-gray-700 hover:text-white'
+                      : 'border-2 text-gray-700'
                   }`}
                   style={
                     plan.popular

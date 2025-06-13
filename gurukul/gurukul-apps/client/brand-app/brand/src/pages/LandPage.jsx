@@ -30,7 +30,7 @@ export const LandPage = () => {
         <FeaturedCourses />
         <EducatorSection />
         <Testimonials />
-        <Pricing />
+        {/* <Pricing /> */}
       </main>
       <Footer />
     </div>

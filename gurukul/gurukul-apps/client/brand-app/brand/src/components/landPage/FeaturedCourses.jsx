@@ -168,16 +168,18 @@ const FeaturedCourses = () => {
         {/* View All Button */}
         <div className="text-center mt-12">
           <button
-            className="px-8 py-3 border-2 rounded-lg font-semibold transition-all duration-200 hover:text-white hover:border-opacity-0"
+            className="px-8 py-3 border-2 rounded-lg font-semibold transition-all duration-200 hover:border-opacity-0"
             style={{
               borderColor: branding.brandColor,
               color: branding.brandColor,
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.backgroundColor = branding.brandColor;
+              e.currentTarget.style.color = '#fff';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = branding.brandColor;
             }}
           >
             View All Courses
