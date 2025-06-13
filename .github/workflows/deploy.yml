@@ -38,18 +38,30 @@ jobs:
             pnpm approve-builds || echo "No scripts to approve"
 
             echo "Killing any existing process on port 4000"
-            PID=$(lsof -t -i:4000)
-            if [ -n "$PID" ]; then
-              echo "Killing PID $PID"
-              kill -9 $PID
+            PID=\$(lsof -t -i:4000 || true)
+            if [ -n "\$PID" ]; then
+              echo "Killing PID \$PID"
+              kill -9 \$PID
+            else
+              echo "No process running on port 4000"
             fi
 
             echo "Starting server in background"
             export NODE_ENV=production
             pnpm --filter ./gurukul/gurukul-apps/server/main dev:server:main > server.log 2>&1 &
 
-            sleep 3
-            echo "Last few lines from server.log:"
+            echo "Waiting for server to start..."
+            sleep 5
+
+            echo "Checking server health"
+            if curl -s http://localhost:4000 > /dev/null; then
+              echo "✅ Server is running on port 4000"
+            else
+              echo "❌ Server failed to start or not listening on port 4000"
+              exit 1
+            fi
+
+            echo "Last few lines of server.log:"
             tail -n 20 server.log
 
             echo "✅ Deployment complete"
