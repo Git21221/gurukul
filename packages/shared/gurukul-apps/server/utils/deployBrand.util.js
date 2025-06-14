@@ -42,6 +42,7 @@ export const deployBrand = async ({
   brandId,
 }) => {
   // Define paths for local processing
+  process.chdir('/home/ec2-user');
   const tempDir = path.join(process.cwd(), 'temp', brandName);
   console.log(`Temporary directory: ${tempDir} w`);
   const publicDir = path.join(
