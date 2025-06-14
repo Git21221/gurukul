@@ -136,9 +136,9 @@ const CreateBrand = () => {
         founderName: founder.fullName.split(' ')[0].toLowerCase(),
       };
       console.log('Brand Data:', data);
-      // dispatch(createBrand({ dispatch, data })).then(() => {
-      //   setModalOpen(true);
-      // });
+      dispatch(createBrand({ dispatch, data })).then(() => {
+        setModalOpen(true);
+      });
     }
   };
 

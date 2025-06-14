@@ -51,7 +51,7 @@ export const deployBrand = async ({
   );
   const brandingFile = path.join(publicDir, 'branding.json');
   const appName = `${brandName}-${founderName}`; //also branch name
-
+  let ext = '';
   try {
     console.log('Creating temporary directory...');
     fs.removeSync(tempDir);
@@ -72,7 +72,7 @@ export const deployBrand = async ({
       if (!matches) {
         throw new Error('Invalid base64 image format');
       }
-      const ext = matches[1].split('+')[0];
+      ext = matches[1].split('+')[0];
       const buffer = Buffer.from(matches[2], 'base64');
       logoFileName = `brand_logo.${ext}`;
       const logoPath = path.join(publicDir, logoFileName);
@@ -81,7 +81,7 @@ export const deployBrand = async ({
       console.log(`Brand logo saved as ${logoFileName}`);
     }
     console.log('Creating branding.json...');
-    const brandingData = { brandName, brandColor, brandId };
+    const brandingData = { brandName, brandColor, brandId, ext };
     fs.writeFileSync(brandingFile, JSON.stringify(brandingData, null, 2));
 
     console.log('Committing & Pushing changes...');
