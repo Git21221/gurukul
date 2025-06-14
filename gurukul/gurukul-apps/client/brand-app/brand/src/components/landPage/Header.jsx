@@ -3,7 +3,7 @@ import { BookOpen, Menu, X } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleSidebar } from '../../redux/slices/uiSlice';
 import { BurgerMenu } from '@gurukul/shared-client';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -81,15 +81,18 @@ const Header = () => {
                   Profile
                 </button>
               ) : (
-                <button className="text-gray-700 hover:text-gray-900">
+                <Link to="/login" className="text-gray-700 hover:text-gray-900">
                   Sign In
-                </button>
+                </Link>
               )
             ) : (
               <>
-                <button className="text-gray-700 hover:text-gray-900 transition-colors duration-200">
+                <Link
+                  to="/login"
+                  className="text-gray-700 hover:text-gray-900 transition-colors duration-200"
+                >
                   Sign In
-                </button>
+                </Link>
                 <button
                   className="px-6 py-2 rounded-lg text-white font-medium transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105"
                   style={{ backgroundColor: branding.brandColor }}
@@ -120,9 +123,12 @@ const Header = () => {
                     Profile
                   </button>
                 ) : (
-                  <button className="text-gray-700 hover:text-gray-900">
+                  <Link
+                    to="/login"
+                    className="text-gray-700 hover:text-gray-900"
+                  >
                     Sign In
-                  </button>
+                  </Link>
                 )}
               </div>
             )}

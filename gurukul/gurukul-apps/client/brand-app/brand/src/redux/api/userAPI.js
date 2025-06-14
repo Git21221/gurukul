@@ -1,3 +1,4 @@
+import { apiClient } from '@gurukul/shared-client';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const registerUser = createAsyncThunk(

@@ -13,6 +13,7 @@ import UserRoute from './utils/UserRoute';
 import { Helmet } from 'react-helmet';
 import DashboardLayout from './components/DashboardLayout';
 import PublicLayout from './components/PublicLayout';
+import Signup from './pages/signup/user/Signup';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
@@ -48,6 +49,12 @@ function App() {
               path="/login"
               element={
                 !isAuthenticated ? <Login /> : <Navigate to={'/'} replace />
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                !isAuthenticated ? <Signup /> : <Navigate to={'/'} replace />
               }
             />
             {/* protected routes */}

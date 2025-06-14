@@ -1,17 +1,16 @@
-import { loginEducator, registerEducator } from "../api/educatorAPI";
-import { createSlice } from "@reduxjs/toolkit";
+import { loginEducator, registerEducator } from '../api/educatorAPI';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   educator: {},
   loading: false,
   error: null,
   success: false,
-  message: "",
+  message: '',
 };
 
-
 const educatorSlice = createSlice({
-  name: "educator",
+  name: 'educator',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -22,15 +21,15 @@ const educatorSlice = createSlice({
         state.success = false;
       })
       .addCase(registerEducator.fulfilled, (state, action) => {
-        console.log("Registration successful:", action.payload);
+        console.log('Registration successful:', action.payload);
         state.loading = false;
         state.educator = action.payload.educator;
         state.success = true;
-        state.message = action.payload.message || "Registration successful";
+        state.message = action.payload.message || 'Registration successful';
       })
       .addCase(registerEducator.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Registration failed";
+        state.error = action.payload || 'Registration failed';
         state.success = false;
       })
       .addCase(loginEducator.pending, (state) => {
@@ -39,15 +38,15 @@ const educatorSlice = createSlice({
         state.success = false;
       })
       .addCase(loginEducator.fulfilled, (state, action) => {
-        console.log("Login successful:", action.payload);
+        console.log('Login successful:', action.payload);
         state.loading = false;
         state.educator = action.payload.educator;
         state.success = true;
-        state.message = action.payload.message || "Login successful";
+        state.message = action.payload.message || 'Login successful';
       })
       .addCase(loginEducator.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Login failed";
+        state.error = action.payload.message || 'Login failed';
         state.success = false;
       });
   },
