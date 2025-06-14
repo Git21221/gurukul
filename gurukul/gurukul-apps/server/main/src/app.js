@@ -16,7 +16,8 @@ const corsOptions = {
       return callback(null, true);
     }
     const allowedOrigins = ['https://gurukul.click'];
-    const allowedOriginRegex = /^https:\/\/[a-z0-9-]+\.gurukul\.click$/;
+    const allowedOriginRegex = /^https:\/\/[a-z0-9-]+\.gurukul\.click$/i;
+
     if (allowedOrigins.includes(origin) || allowedOriginRegex.test(origin)) {
       return callback(null, true);
     }
