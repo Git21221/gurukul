@@ -18,13 +18,15 @@ import Signup from './pages/signup/user/Signup';
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
   const [branding, setBranding] = useState({});
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchBranding()).then((data) => {
       console.log('Branding Data Fetched:', data);
       setBranding(data.payload);
+      setLoading(false);
     });
-  }, []);
+  }, [dispatch]);
   // console.log('Branding Data:', branding);
   const location = useLocation();
   useEffect(() => {
@@ -33,6 +35,7 @@ function App() {
     }
   }, [location.pathname, isAuthenticated]);
   const lastRoute = localStorage.getItem('lastRoute') || '/';
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
 
   return (
     <div>

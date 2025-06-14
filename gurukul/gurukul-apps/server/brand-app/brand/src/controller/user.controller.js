@@ -110,6 +110,14 @@ const loginUser = asyncFuncHandler(async (req, res) => {
   const hashedUserRole = await user.hashUserRole();
   const loggedInUser = await User.findById(user._id).select('-password');
 
+  let responseUser = null;
+  if (loggedInUser) {
+    responseUser = {
+      ...loggedInUser.toObject(),
+      role: 'user',
+    };
+  }
+
   return res
     .status(statusCodes.OK)
     .cookie('refreshToken', refreshToken, refreshTokenOptions)
@@ -125,7 +133,7 @@ const loginUser = asyncFuncHandler(async (req, res) => {
       new apiResponseHandler(
         statusCodes.OK,
         'User logged in successfully',
-        loggedInUser
+        responseUser
       )
     );
 });

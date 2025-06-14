@@ -7,6 +7,9 @@ import {
   verifyUserRole,
   verifyUserToken,
 } from '../api/authAPI';
+import { loginUser } from '../api/userAPI';
+import { loginEducator } from '../api/educatorAPI';
+import { loginFounder } from '../api/founderAPI';
 
 const initialState = {
   user: {},
@@ -49,6 +52,7 @@ const authSlice = createSlice({
       .addCase(verifyEducatorToken.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true;
+        state.user = action.payload.data;
       })
       .addCase(verifyEducatorToken.rejected, (state, action) => {
         state.isLoading = false;
@@ -79,6 +83,7 @@ const authSlice = createSlice({
       .addCase(verifyFounderToken.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true;
+        state.user = action.payload.data;
       })
       .addCase(verifyFounderToken.rejected, (state, action) => {
         state.isLoading = false;
@@ -109,6 +114,7 @@ const authSlice = createSlice({
       .addCase(verifyUserToken.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true;
+        state.user = action.payload.data;
       })
       .addCase(verifyUserToken.rejected, (state, action) => {
         state.isLoading = false;
@@ -130,6 +136,84 @@ const authSlice = createSlice({
       .addCase(verifyUserRole.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || 'Failed to verify user role';
+        state.userRole = '';
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload.statusCode === 200) {
+          state.user = action.payload.data;
+          state.isAuthenticated = true;
+          state.userRole = action.payload.data.role;
+        } else {
+          state.isAuthenticated = false;
+          state.error = action.payload.message || 'Login failed';
+          state.user = {};
+          state.token = null;
+          state.userRole = '';
+        }
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.error = action.payload.message || 'Login failed';
+        state.user = {};
+        state.token = null;
+        state.userRole = '';
+      })
+      .addCase(loginEducator.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginEducator.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload.statusCode === 200) {
+          state.user = action.payload.data;
+          state.isAuthenticated = true;
+          state.userRole = action.payload.data.role;
+        } else {
+          state.isAuthenticated = false;
+          state.error = action.payload.message || 'Login failed';
+          state.user = {};
+          state.token = null;
+          state.userRole = '';
+        }
+      })
+      .addCase(loginEducator.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.error = action.payload.message || 'Login failed';
+        state.user = {};
+        state.token = null;
+        state.userRole = '';
+      })
+      .addCase(loginFounder.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginFounder.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload.statusCode === 200) {
+          state.user = action.payload.data;
+          state.isAuthenticated = true;
+          state.userRole = action.payload.data.role;
+        } else {
+          state.isAuthenticated = false;
+          state.error = action.payload.message || 'Login failed';
+          state.user = {};
+          state.token = null;
+          state.userRole = '';
+        }
+      })
+      .addCase(loginFounder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.error = action.payload.message || 'Login failed';
+        state.user = {};
+        state.token = null;
         state.userRole = '';
       });
   },

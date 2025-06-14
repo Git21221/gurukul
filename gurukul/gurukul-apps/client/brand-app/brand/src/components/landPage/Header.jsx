@@ -4,21 +4,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleSidebar } from '../../redux/slices/uiSlice';
 import { BurgerMenu } from '@gurukul/shared-client';
 import { Link, useLocation } from 'react-router-dom';
+import { ProfileDropdown } from '../ProfileDropdown';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const { branding } = useSelector((state) => state.brandDetails);
-  const { isAuthenticated } = useSelector((state) => state.auth); // check auth
+  const { isAuthenticated, user } = useSelector((state) => state.auth); // check auth
+  console.log('Header user:', user);
   const dispatch = useDispatch();
   const location = useLocation();
   const isHome = location.pathname === '/';
-  const [src, setSrc] = useState('/brand_logo.svg');
-
-  const handleError = () => {
-    if (src.endsWith('.svg')) setSrc('/brand_logo.png');
-    else if (src.endsWith('.png')) setSrc('/brand_logo.jpg');
-    else setSrc('/brand_logo.jpeg');
-  };
+  const [src, setSrc] = useState('/brand_logo' + '.' + branding.ext);
 
   return (
     <header
@@ -38,7 +34,7 @@ const Header = () => {
                 alt="Brand Logo"
                 className="h-6 w-6"
                 style={{ color: branding.brandColor }}
-                onError={handleError}
+                // onError={handleError}
               />
             </div>
             <span
@@ -75,62 +71,72 @@ const Header = () => {
 
           {/* Right Section */}
           <div className="hidden md:flex items-center space-x-4">
-            {!isHome ? (
+            {isHome ? (
               isAuthenticated ? (
-                <button className="text-gray-700 hover:text-gray-900">
-                  Profile
-                </button>
+                <ProfileDropdown user={user} brandColor={branding.brandColor} />
               ) : (
-                <Link to="/login" className="text-gray-700 hover:text-gray-900">
-                  Sign In
-                </Link>
-              )
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="text-gray-700 hover:text-gray-900 transition-colors duration-200"
-                >
-                  Sign In
-                </Link>
-                <button
+                <>
+                  <Link
+                    to="/login"
+                    className="px-6 py-2 rounded-lg text-white font-medium transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105"
+                    style={{ backgroundColor: branding.brandColor }}
+                  >
+                    Sign In
+                  </Link>
+                  {/* <button
                   className="px-6 py-2 rounded-lg text-white font-medium transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105"
                   style={{ backgroundColor: branding.brandColor }}
                 >
                   Get Started
-                </button>
-              </>
+                </button> */}
+                </>
+              )
+            ) : isAuthenticated ? (
+              <ProfileDropdown user={user} brandColor={branding.brandColor} />
+            ) : (
+              <Link
+                to="/login"
+                className="px-6 py-2 rounded-lg text-white font-medium transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105"
+                style={{ backgroundColor: branding.brandColor }}
+              >
+                Sign In
+              </Link>
             )}
           </div>
 
-          {/* Mobile Right Section */}
-          <div className="md:hidden">
+          {/* Right Section */}
+          <div className="flex md:hidden items-center">
             {isHome ? (
-              <button
-                className="p-2"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
-                {isMenuOpen ? (
-                  <X className="h-6 w-6" />
-                ) : (
-                  <Menu className="h-6 w-6" />
-                )}
-              </button>
-            ) : (
-              <div className="p-2">
-                {isAuthenticated ? (
-                  <button className="text-gray-700 hover:text-gray-900">
-                    Profile
-                  </button>
-                ) : (
+              isAuthenticated ? (
+                <ProfileDropdown user={user} brandColor={branding.brandColor} />
+              ) : (
+                <>
+                  {/* <button
+                  className="px-6 py-2 rounded-lg text-white font-medium transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105"
+                  style={{ backgroundColor: branding.brandColor }}
+                >
+                  Get Started
+                </button> */}
+
                   <Link
                     to="/login"
-                    className="text-gray-700 hover:text-gray-900"
+                    className="px-6 py-2 rounded-lg text-white font-medium transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105"
+                    style={{ backgroundColor: branding.brandColor }}
                   >
                     Sign In
                   </Link>
-                )}
-              </div>
+                </>
+              )
+            ) : isAuthenticated ? (
+              <ProfileDropdown user={user} brandColor={branding.brandColor} />
+            ) : (
+              <Link
+                to="/login"
+                className="px-6 py-2 rounded-lg text-white font-medium transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105"
+                style={{ backgroundColor: branding.brandColor }}
+              >
+                Sign In
+              </Link>
             )}
           </div>
         </div>
@@ -176,11 +182,15 @@ const Header = () => {
             ) : (
               <div className="flex flex-col space-y-2">
                 {isAuthenticated ? (
-                  <button className="text-left text-gray-700 hover:text-gray-900">
-                    Profile
-                  </button>
+                  <ProfileDropdown
+                    user={user}
+                    brandColor={branding.brandColor}
+                  />
                 ) : (
-                  <button className="text-left text-gray-700 hover:text-gray-900">
+                  <button
+                    className="px-6 py-2 rounded-lg text-white font-medium transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105"
+                    style={{ backgroundColor: branding.brandColor }}
+                  >
                     Sign In
                   </button>
                 )}

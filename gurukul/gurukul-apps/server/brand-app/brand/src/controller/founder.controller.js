@@ -71,6 +71,14 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
     '-password'
   );
 
+  let responseFounder = null;
+  if (loggedInFounder) {
+    responseFounder = {
+      ...loggedInFounder.toObject(),
+      role: 'founder',
+    };
+  }
+
   return res
     .status(200)
     .cookie('refreshToken', refreshToken, refreshTokenOptions)
@@ -84,7 +92,7 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
       new apiResponseHandler(
         200,
         'Founder logged in successfully',
-        loggedInFounder
+        responseFounder
       )
     );
 });

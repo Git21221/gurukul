@@ -14,13 +14,7 @@ import { useSelector } from 'react-redux';
 
 const Footer = () => {
   const { branding } = useSelector((state) => state.brandDetails);
-  const [src, setSrc] = useState('/brand_logo.svg');
-
-  const handleError = () => {
-    if (src.endsWith('.svg')) setSrc('/brand_logo.png');
-    else if (src.endsWith('.png')) setSrc('/brand_logo.jpg');
-    else setSrc('/brand_logo.jpeg');
-  };
+  const [src, setSrc] = useState('/brand_logo' + '.' + branding.ext);
 
   const footerLinks = {
     company: [
@@ -76,7 +70,6 @@ const Footer = () => {
                 >
                   <img
                     src={src}
-                    onError={handleError}
                     className="h-6 w-6"
                     style={{ color: branding.brandColor }}
                   />
@@ -100,16 +93,16 @@ const Footer = () => {
                 <div className="flex items-center space-x-3 text-gray-300">
                   <Mail className="h-5 w-5" />
                   <span>
-                    hello@{branding.brandName.toLowerCase()}academy.com
+                    contact@{branding.brandName.toLowerCase()}.gurukul.click
                   </span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-300">
                   <Phone className="h-5 w-5" />
-                  <span>+1 (555) 123-4567</span>
+                  <span>+91 93305 41033</span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-300">
                   <MapPin className="h-5 w-5" />
-                  <span>San Francisco, CA</span>
+                  <span>Kolkata, WB</span>
                 </div>
               </div>
             </div>
@@ -213,7 +206,8 @@ const Footer = () => {
         <div className="py-6 border-t border-gray-800">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="text-gray-300 text-sm">
-              © 2024 {branding.brandName}. All rights reserved.
+              © {new Date().getFullYear()} {branding.brandName}. All rights
+              reserved.
             </div>
 
             {/* Social Links */}

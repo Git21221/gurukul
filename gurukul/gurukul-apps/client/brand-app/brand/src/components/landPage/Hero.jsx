@@ -1,9 +1,11 @@
 import React from 'react';
 import { Play, Star, Users, Award } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   const { branding } = useSelector((state) => state.brandDetails);
+  const { userRole } = useSelector((state) => state.auth);
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-white">
@@ -53,12 +55,31 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <button
-                className="px-8 py-4 rounded-lg text-white font-semibold text-lg transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105 shadow-lg"
-                style={{ backgroundColor: branding.brandColor }}
-              >
-                Start Learning Today
-              </button>
+              {userRole === 'founder' ? (
+                <Link
+                  to="/founder/home"
+                  className="px-8 py-4 rounded-lg text-white font-semibold text-lg transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105 shadow-lg"
+                  style={{ backgroundColor: branding.brandColor }}
+                >
+                  Get Started
+                </Link>
+              ) : userRole === 'educator' ? (
+                <Link
+                  tp="/educator/home"
+                  className="px-8 py-4 rounded-lg text-white font-semibold text-lg transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105 shadow-lg"
+                  style={{ backgroundColor: branding.brandColor }}
+                >
+                  Start Teaching Today
+                </Link>
+              ) : (
+                <Link
+                  to="/user/home"
+                  className="px-8 py-4 rounded-lg text-white font-semibold text-lg transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105 shadow-lg"
+                  style={{ backgroundColor: branding.brandColor }}
+                >
+                  Start Learning Today
+                </Link>
+              )}
               <button className="px-8 py-4 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold text-lg transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 flex items-center justify-center space-x-2">
                 <Play className="h-5 w-5" />
                 <span>Watch Demo</span>

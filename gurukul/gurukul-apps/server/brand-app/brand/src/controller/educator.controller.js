@@ -143,6 +143,14 @@ const loginEducator = asyncFuncHandler(async (req, res) => {
     '-password'
   );
 
+  let responseEducator = null;
+  if (loggedInEducator) {
+    responseEducator = {
+      ...loggedInEducator.toObject(),
+      role: 'educator',
+    };
+  }
+
   return res
     .status(statusCodes.OK)
     .cookie('refreshToken', refreshToken, refreshTokenOptions)
@@ -158,7 +166,7 @@ const loginEducator = asyncFuncHandler(async (req, res) => {
       new apiResponseHandler(
         200,
         'Educator logged in successfully',
-        loggedInEducator
+        responseEducator
       )
     );
 });

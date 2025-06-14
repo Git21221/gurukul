@@ -77,7 +77,7 @@ const Login = ({ onBack }) => {
             if (res.payload.statusCode > 399) {
               setError(res.payload.message || 'Login failed');
             } else {
-              navigate('/login');
+              navigate('/');
             }
           })
         : selectedRole === 'educator'
@@ -87,7 +87,7 @@ const Login = ({ onBack }) => {
               if (res.payload.statusCode > 399) {
                 setError(res.payload.message || 'Login failed');
               } else {
-                navigate('/login');
+                navigate('/');
               }
             })
           : dispatch(
@@ -96,7 +96,7 @@ const Login = ({ onBack }) => {
               if (res.payload.statusCode > 399) {
                 setError(res.payload.message || 'Login failed');
               } else {
-                navigate('/login');
+                navigate('/');
               }
             });
     } catch (error) {
