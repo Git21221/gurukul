@@ -20,6 +20,12 @@ import {
   CheckCircle,
   Home,
 } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addVideosToPlayList,
+  createPlaylist,
+} from '../../../redux/api/playlistAPI';
+import { uploadVideo } from '../../../redux/api/videoAPI';
 
 export const UploadVideo = () => {
   const navigate = useNavigate();
@@ -30,6 +36,9 @@ export const UploadVideo = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [playListId, setPlayListId] = useState(null);
+  const { branding } = useSelector((state) => state.brandDetails);
+  const dispatch = useDispatch();
 
   // Course form state
   const [courseForm, setCourseForm] = useState({
@@ -47,6 +56,26 @@ export const UploadVideo = () => {
     videoFile: null,
     thumbnail: null,
   });
+  console.log(videoForm.videoFile);
+
+  function darken(hex, factor = 0.1) {
+    const f = parseInt(hex.slice(1), 16);
+    const t = 0; // black
+    const R = f >> 16;
+    const G = (f >> 8) & 0x00ff;
+    const B = f & 0x0000ff;
+    return (
+      '#' +
+      (
+        0x1000000 +
+        (Math.round((1 - factor) * R) << 16) +
+        (Math.round((1 - factor) * G) << 8) +
+        Math.round((1 - factor) * B)
+      )
+        .toString(16)
+        .slice(1)
+    );
+  }
 
   const [courses, setCourses] = useState([
     {
@@ -120,8 +149,6 @@ export const UploadVideo = () => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
       const newCourse = {
         id: Date.now().toString(),
         name: courseForm.name,
@@ -138,11 +165,21 @@ export const UploadVideo = () => {
         created_by_educator:
           courseForm.created_by_educator || 'current-educator',
       };
-
-      setCourses((prev) => [newCourse, ...prev]);
-      setSelectedCourse(newCourse);
-      setCurrentStep(2);
-      setCurrentView('course-created');
+      const data = {
+        name: newCourse.name,
+        description: newCourse.description,
+      };
+      dispatch(
+        createPlaylist({ dispatch, data, brandId: branding.brandId })
+      ).then((res) => {
+        if (res.payload.statusCode < 400) {
+          setPlayListId(res.payload.data._id);
+          setCourses((prev) => [newCourse, ...prev]);
+          setSelectedCourse(newCourse);
+          setCurrentStep(2);
+          setCurrentView('course-created');
+        }
+      });
     } catch (error) {
       console.error('Error creating course:', error);
     } finally {
@@ -155,10 +192,22 @@ export const UploadVideo = () => {
     if (!selectedCourse) return;
 
     setIsSubmitting(true);
-
+    const formData = new FormData();
+    formData.append('title', videoForm.title);
+    formData.append('video', videoForm.videoFile);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
+      dispatch(
+        uploadVideo({ dispatch, data: formData, brandId: branding.brandId })
+      ).then((res) => {
+        dispatch(
+          addVideosToPlayList({
+            dispatch,
+            data: { videos: [res.payload.data._id] },
+            brandId: branding.brandId,
+            playlistId: playListId,
+          })
+        );
+      });
       const newVideo = {
         id: Date.now().toString(),
         title: videoForm.title,
@@ -205,11 +254,16 @@ export const UploadVideo = () => {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-medium text-sm ${
                   currentStep > step.number
-                    ? 'bg-emerald-500 text-white'
+                    ? 'text-white'
                     : currentStep === step.number
-                      ? 'bg-blue-600 text-white'
+                      ? 'text-white'
                       : 'bg-gray-200 text-gray-600'
                 }`}
+                style={
+                  currentStep > step.number || currentStep === step.number
+                    ? { backgroundColor: branding.brandColor }
+                    : {}
+                }
               >
                 {currentStep > step.number ? (
                   <CheckCircle className="w-5 h-5" />
@@ -230,11 +284,15 @@ export const UploadVideo = () => {
                 <p className="text-xs text-gray-500">{step.description}</p>
               </div>
             </div>
+
+            {/* Connector line */}
             {index < steps.length - 1 && (
               <div
-                className={`w-16 h-0.5 mx-4 ${
-                  currentStep > step.number ? 'bg-emerald-500' : 'bg-gray-200'
-                }`}
+                className="w-16 h-0.5 mx-4"
+                style={{
+                  backgroundColor:
+                    currentStep > step.number ? branding.brandColor : '#e5e7eb', // fallback to Tailwind gray-200
+                }}
               />
             )}
           </div>
@@ -271,7 +329,18 @@ export const UploadVideo = () => {
                   onChange={(e) =>
                     setCourseForm((prev) => ({ ...prev, name: e.target.value }))
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  style={{
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    padding: '0.75rem 1rem',
+                    width: '100%',
+                    outline: 'none',
+                    transition: 'all 0.2s',
+                  }}
+                  onFocus={(e) =>
+                    (e.currentTarget.style.boxShadow = `0 0 0 2px ${branding.brandColor}`)
+                  }
+                  onBlur={(e) => (e.currentTarget.style.boxShadow = 'none')}
                   placeholder="Enter course name"
                 />
               </div>
@@ -289,7 +358,18 @@ export const UploadVideo = () => {
                       description: e.target.value,
                     }))
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  style={{
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    padding: '0.75rem 1rem',
+                    width: '100%',
+                    outline: 'none',
+                    transition: 'all 0.2s',
+                  }}
+                  onFocus={(e) =>
+                    (e.currentTarget.style.boxShadow = `0 0 0 2px ${branding.brandColor}`)
+                  }
+                  onBlur={(e) => (e.currentTarget.style.boxShadow = 'none')}
                   rows={6}
                   placeholder="Describe what students will learn in this course"
                 />
@@ -308,7 +388,18 @@ export const UploadVideo = () => {
                       created_by_educator: e.target.value,
                     }))
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  style={{
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    padding: '0.75rem 1rem',
+                    width: '100%',
+                    outline: 'none',
+                    transition: 'all 0.2s',
+                  }}
+                  onFocus={(e) =>
+                    (e.currentTarget.style.boxShadow = `0 0 0 2px ${branding.brandColor}`)
+                  }
+                  onBlur={(e) => (e.currentTarget.style.boxShadow = 'none')}
                   placeholder="Enter educator ID (optional)"
                 />
               </div>
@@ -326,7 +417,18 @@ export const UploadVideo = () => {
                       created_by_founder: e.target.value,
                     }))
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  style={{
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    padding: '0.75rem 1rem',
+                    width: '100%',
+                    outline: 'none',
+                    transition: 'all 0.2s',
+                  }}
+                  onFocus={(e) =>
+                    (e.currentTarget.style.boxShadow = `0 0 0 2px ${branding.brandColor}`)
+                  }
+                  onBlur={(e) => (e.currentTarget.style.boxShadow = 'none')}
                   placeholder="Enter founder ID (optional)"
                 />
               </div>
@@ -337,7 +439,20 @@ export const UploadVideo = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Course Thumbnail
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                <div
+                  style={{
+                    border: '2px dashed #d1d5db',
+                    borderRadius: '0.5rem',
+                    padding: '2rem',
+                    textAlign: 'center',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = branding.brandColor;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#d1d5db';
+                  }}
+                >
                   <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-sm text-gray-600 mb-2">
                     Upload course thumbnail
@@ -376,11 +491,24 @@ export const UploadVideo = () => {
                 )}
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-blue-900 mb-2">
+              <div
+                style={{
+                  backgroundColor: `${branding.brandColor}20`,
+                  border: `1px solid ${branding.brandColor}55`,
+                  borderRadius: '0.5rem',
+                  padding: '1rem',
+                }}
+              >
+                <h3
+                  style={{ color: branding.brandColor }}
+                  className="text-sm font-medium mb-2"
+                >
                   Course Creation Tips
                 </h3>
-                <ul className="text-sm text-blue-800 space-y-1">
+                <ul
+                  style={{ color: branding.brandColor }}
+                  className="text-sm space-y-1"
+                >
                   <li>• Use a clear, descriptive course name</li>
                   <li>• Write a detailed description of learning outcomes</li>
                   <li>• Upload a high-quality thumbnail image</li>
@@ -402,7 +530,19 @@ export const UploadVideo = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="px-6 py-3 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              style={{
+                backgroundColor: branding.brandColor,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = darken(
+                  branding.brandColor,
+                  0.1
+                );
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = branding.brandColor;
+              }}
             >
               {isSubmitting ? (
                 <>

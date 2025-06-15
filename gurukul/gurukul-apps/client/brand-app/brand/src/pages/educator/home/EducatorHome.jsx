@@ -14,10 +14,13 @@ import {
   Star,
   Clock,
 } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
 export const EducatorHome = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const { branding } = useSelector((state) => state.brandDetails);
+  const [src, setSrc] = useState('/brand_logo' + '.' + branding.ext);
 
   const [courses] = useState([
     {
@@ -124,16 +127,23 @@ export const EducatorHome = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <BookOpen className="w-5 h-5 text-white" />
+                <div
+                  className="w-8 h-8 bg-gradient-to-r rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: `${branding.brandColor}20` }}
+                  title={branding.brandName}
+                >
+                  <img src={src} className="w-5 h-5 text-white" />
                 </div>
-                <h1 className="text-xl font-bold text-gray-900">EduHub</h1>
+                <h1 className="text-xl font-bold text-gray-900">
+                  {branding.brandName}
+                </h1>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleCreateCourse}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                className="text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                style={{ backgroundColor: branding.brandColor, color: '#fff' }}
               >
                 <Plus className="w-4 h-4" />
                 <span>Create Course</span>
@@ -336,7 +346,10 @@ export const EducatorHome = () => {
                     <Clock className="w-4 h-4" />
                     <span>{course.duration}</span>
                   </div>
-                  <button className="text-blue-600 hover:text-blue-700 p-1 rounded transition-colors">
+                  <button
+                    className="p-1 rounded transition-colors"
+                    style={{ color: branding.brandColor }}
+                  >
                     <MoreHorizontal className="w-5 h-5" />
                   </button>
                 </div>
@@ -346,7 +359,10 @@ export const EducatorHome = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-8 text-white">
+        <div
+          className="mt-12 bg-gradient-to-r rounded-xl p-8 text-white"
+          style={{ backgroundColor: `${branding.brandColor}` }}
+        >
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-4 md:mb-0">
               <h3 className="text-2xl font-bold mb-2">
@@ -358,7 +374,8 @@ export const EducatorHome = () => {
             </div>
             <button
               onClick={handleCreateCourse}
-              className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+              className="bg-white hover:bg-blue-50 px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+              style={{ color: branding.brandColor }}
             >
               <Plus className="w-5 h-5" />
               <span>Create New Course</span>

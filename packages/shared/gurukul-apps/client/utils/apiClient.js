@@ -12,12 +12,12 @@ export const apiClient = async (
   );
 
   try {
-    // Show loader
+    // Determine environment
     const env = import.meta.env.VITE_ENVIRONMENT;
-    console.log(import.meta.env.VITE_ENVIRONMENT);
+    console.log('Environment:', env);
 
+    // Set base URL
     let base_url = '';
-
     if (env === 'development') {
       const port =
         source === 'main'
@@ -33,23 +33,25 @@ export const apiClient = async (
 
     const fullUrl = `${base_url}/api/v1/${source}/${url}`;
 
-    const resposne = await fetch(fullUrl, {
+    // Detect if request body is FormData
+    const isFormData = options?.body instanceof FormData;
+    console.log('Is FormData:', isFormData);
+    const response = await fetch(fullUrl, {
       method,
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
         ...options?.headers,
       },
       ...options,
     });
 
-    const data = await resposne.json();
+    const data = await response.json();
+
     console.log('API Response:', data);
     return data;
   } catch (error) {
-    // console.log(`Error in apiClient: ${error.message}`);
+    console.error('Error in apiClient:', error.message);
+    throw error;
   }
-  // finally {
-  //   //hide loader
-  // }
 };

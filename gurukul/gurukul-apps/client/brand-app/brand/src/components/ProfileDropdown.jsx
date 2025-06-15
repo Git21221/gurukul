@@ -38,7 +38,7 @@ export const ProfileDropdown = ({ user, brandColor }) => {
         ) : (
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold"
-            style={{ backgroundColor: `${brandColor}40` }}
+            style={{ backgroundColor: `${brandColor}` }}
           >
             {firstLetter}
           </div>

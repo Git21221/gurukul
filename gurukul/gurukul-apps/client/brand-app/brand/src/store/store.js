@@ -7,6 +7,7 @@ import { logoutMiddleware } from '../redux/middlewares/logoutMiddleware.js';
 import { loginMiddleware } from '../redux/middlewares/loginMiddleware.js';
 import founderSlice from '../redux/slices/founderSlice.js';
 import userSlice from '../redux/slices/userSlice.js';
+import playlistSlice from '../redux/slices/playlistSlice.js';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     founder: founderSlice.reducer,
     ui: uiSlice.reducer,
     user: userSlice.reducer,
+    playlist: playlistSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(logoutMiddleware, loginMiddleware),

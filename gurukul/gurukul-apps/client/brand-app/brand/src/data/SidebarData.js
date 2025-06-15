@@ -4,7 +4,6 @@ import {
   HomeLogo,
   UpdatesLogo,
 } from '@gurukul/shared-client';
-import path from 'path';
 import { RiVideoUploadLine } from 'react-icons/ri';
 
 export const sidebarBrandList = [
