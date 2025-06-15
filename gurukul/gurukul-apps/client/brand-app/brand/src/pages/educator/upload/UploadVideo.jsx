@@ -39,6 +39,7 @@ export const UploadVideo = () => {
   const [playListId, setPlayListId] = useState(null);
   const { branding } = useSelector((state) => state.brandDetails);
   const dispatch = useDispatch();
+  const brandColor = branding?.brandColor || '#4F46E5';
 
   // Course form state
   const [courseForm, setCourseForm] = useState({
@@ -243,6 +244,13 @@ export const UploadVideo = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+  const darkenColor = (hex, percent = 0.1) => {
+    const num = parseInt(hex.replace('#', ''), 16);
+    let r = (num >> 16) * (1 - percent);
+    let g = ((num >> 8) & 0x00ff) * (1 - percent);
+    let b = (num & 0x0000ff) * (1 - percent);
+    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
   };
 
   const renderStepper = () => (
@@ -567,8 +575,11 @@ export const UploadVideo = () => {
       {renderStepper()}
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-        <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle className="w-8 h-8 text-emerald-600" />
+        <div
+          className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
+          style={{ backgroundColor: `${brandColor}1A` }} // 10% opacity
+        >
+          <CheckCircle className="w-8 h-8" style={{ color: brandColor }} />
         </div>
 
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -611,7 +622,8 @@ export const UploadVideo = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
             onClick={() => setCurrentView('upload-video')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2"
+            className="text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2"
+            style={{ backgroundColor: brandColor }}
           >
             <UploadIcon className="w-4 h-4" />
             <span>Upload First Video</span>
@@ -630,207 +642,270 @@ export const UploadVideo = () => {
     </div>
   );
 
-  const renderUploadVideo = () => (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {renderStepper()}
+  const renderUploadVideo = () => {
+    const brandColor = branding?.brandColor || '#4A90E2';
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Upload Video
-          </h2>
-          <p className="text-gray-600">
-            Add a video to "{selectedCourse?.name}"
-          </p>
-        </div>
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {renderStepper()}
 
-        <form onSubmit={handleUploadVideo} className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Video Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={videoForm.title}
-                  onChange={(e) =>
-                    setVideoForm((prev) => ({ ...prev, title: e.target.value }))
-                  }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  placeholder="Enter video title"
-                />
-              </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Upload Video
+            </h2>
+            <p className="text-gray-600">
+              Add a video to "{selectedCourse?.name}"
+            </p>
+          </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Video Description *
-                </label>
-                <textarea
-                  required
-                  value={videoForm.description}
-                  onChange={(e) =>
-                    setVideoForm((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  rows={5}
-                  placeholder="Describe what this video covers"
-                />
-              </div>
-
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-900 mb-2">
-                  Course Information
-                </h3>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>
-                    <span className="font-medium">Course:</span>{' '}
-                    {selectedCourse?.name}
-                  </p>
-                  <p>
-                    <span className="font-medium">Current Videos:</span>{' '}
-                    {selectedCourse?.videos.length}
-                  </p>
-                  <p>
-                    <span className="font-medium">Status:</span>{' '}
-                    {selectedCourse?.status}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Video File *
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
-                  <FileVideo className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-sm text-gray-600 mb-2">
-                    Upload your video file
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    MP4, MOV, AVI up to 500MB
-                  </p>
-                  <input
-                    type="file"
-                    accept="video/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setVideoForm((prev) => ({ ...prev, videoFile: file }));
-                      }
-                    }}
-                    className="hidden"
-                    id="video-upload"
-                  />
-                  <label
-                    htmlFor="video-upload"
-                    className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
-                  >
-                    Choose Video File
+          <form onSubmit={handleUploadVideo} className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Left */}
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Video Title *
                   </label>
+                  <input
+                    type="text"
+                    required
+                    value={videoForm.title}
+                    onChange={(e) =>
+                      setVideoForm((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg transition-colors"
+                    style={{
+                      outline: 'none',
+                      boxShadow: `0 0 0 2px ${brandColor}30`,
+                    }}
+                    placeholder="Enter video title"
+                  />
                 </div>
-                {videoForm.videoFile && (
-                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-sm text-green-800">
-                      Selected: {videoForm.videoFile.name} (
-                      {(videoForm.videoFile.size / 1024 / 1024).toFixed(2)} MB)
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Video Description *
+                  </label>
+                  <textarea
+                    required
+                    value={videoForm.description}
+                    onChange={(e) =>
+                      setVideoForm((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg transition-colors"
+                    style={{
+                      outline: 'none',
+                      boxShadow: `0 0 0 2px ${brandColor}30`,
+                    }}
+                    rows={5}
+                    placeholder="Describe what this video covers"
+                  />
+                </div>
+
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <h3 className="text-sm font-medium text-gray-900 mb-2">
+                    Course Information
+                  </h3>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <p>
+                      <span className="font-medium">Course:</span>{' '}
+                      {selectedCourse?.name}
+                    </p>
+                    <p>
+                      <span className="font-medium">Current Videos:</span>{' '}
+                      {selectedCourse?.videos.length}
+                    </p>
+                    <p>
+                      <span className="font-medium">Status:</span>{' '}
+                      {selectedCourse?.status}
                     </p>
                   </div>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Video Thumbnail (Optional)
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-                  <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-xs text-gray-600 mb-2">
-                    Upload custom thumbnail
-                  </p>
-                  <p className="text-xs text-gray-500">PNG, JPG up to 5MB</p>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setVideoForm((prev) => ({ ...prev, thumbnail: file }));
-                      }
-                    }}
-                    className="hidden"
-                    id="video-thumbnail-upload"
-                  />
-                  <label
-                    htmlFor="video-thumbnail-upload"
-                    className="mt-2 inline-flex items-center px-3 py-1 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
-                  >
-                    Choose File
-                  </label>
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-blue-900 mb-2">
-                  Video Upload Tips
-                </h3>
-                <ul className="text-sm text-blue-800 space-y-1">
-                  <li>• Use clear, descriptive video titles</li>
-                  <li>
-                    • Provide detailed descriptions for better searchability
-                  </li>
-                  <li>• Upload high-quality video files</li>
-                  <li>• Custom thumbnails improve click-through rates</li>
-                </ul>
+              {/* Right */}
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Video File *
+                  </label>
+                  <div
+                    className="border-2 border-dashed rounded-lg p-8 text-center transition-colors"
+                    style={{ borderColor: '#D1D5DB' }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.borderColor = brandColor)
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.borderColor = '#D1D5DB')
+                    }
+                  >
+                    <FileVideo className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-sm text-gray-600 mb-2">
+                      Upload your video file
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      MP4, MOV, AVI up to 500MB
+                    </p>
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file)
+                          setVideoForm((prev) => ({
+                            ...prev,
+                            videoFile: file,
+                          }));
+                      }}
+                      className="hidden"
+                      id="video-upload"
+                    />
+                    <label
+                      htmlFor="video-upload"
+                      className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
+                    >
+                      Choose Video File
+                    </label>
+                  </div>
+                  {videoForm.videoFile && (
+                    <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-800">
+                        Selected: {videoForm.videoFile.name} (
+                        {(videoForm.videoFile.size / 1024 / 1024).toFixed(2)}{' '}
+                        MB)
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Video Thumbnail (Optional)
+                  </label>
+                  <div
+                    className="border-2 border-dashed rounded-lg p-6 text-center transition-colors"
+                    style={{ borderColor: '#D1D5DB' }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.borderColor = brandColor)
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.borderColor = '#D1D5DB')
+                    }
+                  >
+                    <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-xs text-gray-600 mb-2">
+                      Upload custom thumbnail
+                    </p>
+                    <p className="text-xs text-gray-500">PNG, JPG up to 5MB</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file)
+                          setVideoForm((prev) => ({
+                            ...prev,
+                            thumbnail: file,
+                          }));
+                      }}
+                      className="hidden"
+                      id="video-thumbnail-upload"
+                    />
+                    <label
+                      htmlFor="video-thumbnail-upload"
+                      className="mt-2 inline-flex items-center px-3 py-1 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
+                    >
+                      Choose File
+                    </label>
+                  </div>
+                </div>
+
+                <div
+                  className="rounded-lg p-4"
+                  style={{
+                    backgroundColor: `${brandColor}10`,
+                    border: `1px solid ${brandColor}40`,
+                  }}
+                >
+                  <h3
+                    className="text-sm font-medium mb-2"
+                    style={{ color: brandColor }}
+                  >
+                    Video Upload Tips
+                  </h3>
+                  <ul
+                    className="text-sm space-y-1"
+                    style={{ color: brandColor }}
+                  >
+                    <li>• Use clear, descriptive video titles</li>
+                    <li>
+                      • Provide detailed descriptions for better searchability
+                    </li>
+                    <li>• Upload high-quality video files</li>
+                    <li>• Custom thumbnails improve click-through rates</li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex justify-between pt-6 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={() => setCurrentView('course-created')}
-              className="flex items-center space-x-2 px-6 py-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back</span>
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting || !videoForm.videoFile}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Uploading...</span>
-                </>
-              ) : (
-                <>
-                  <UploadIcon className="w-4 h-4" />
-                  <span>Upload Video</span>
-                </>
-              )}
-            </button>
-          </div>
-        </form>
+            <div className="flex justify-between pt-6 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={() => setCurrentView('course-created')}
+                className="flex items-center space-x-2 px-6 py-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting || !videoForm.videoFile}
+                className="px-6 py-3 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                style={{ backgroundColor: brandColor }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor =
+                    darkenColor(brandColor))
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = brandColor)
+                }
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Uploading...</span>
+                  </>
+                ) : (
+                  <>
+                    <UploadIcon className="w-4 h-4" />
+                    <span>Upload Video</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderVideoUploaded = () => (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {renderStepper()}
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-        <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle className="w-8 h-8 text-emerald-600" />
+        <div
+          className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
+          style={{ backgroundColor: `${brandColor}20` }} // 20% opacity background
+        >
+          <CheckCircle className="w-8 h-8" style={{ color: brandColor }} />
         </div>
 
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -844,7 +919,8 @@ export const UploadVideo = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
             onClick={() => setCurrentView('upload-video')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2"
+            className="text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2"
+            style={{ backgroundColor: brandColor }}
           >
             <Plus className="w-4 h-4" />
             <span>Add Another Video</span>
@@ -889,7 +965,8 @@ export const UploadVideo = () => {
         </div>
         <button
           onClick={() => setCurrentView('upload-video')}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+          className="text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+          style={{ backgroundColor: brandColor }}
         >
           <Plus className="w-4 h-4" />
           <span>Add Video</span>
@@ -915,7 +992,10 @@ export const UploadVideo = () => {
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <Video className="w-6 h-6 text-blue-600 mx-auto mb-1" />
+                    <Video
+                      className="w-6 h-6 mx-auto mb-1"
+                      style={{ color: brandColor }}
+                    />
                     <p className="text-sm font-medium text-gray-900">
                       {selectedCourse.videos.length}
                     </p>
@@ -966,7 +1046,8 @@ export const UploadVideo = () => {
                   </p>
                   <button
                     onClick={() => setCurrentView('upload-video')}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2 mx-auto"
+                    className="text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2 mx-auto"
+                    style={{ backgroundColor: brandColor }}
                   >
                     <UploadIcon className="w-4 h-4" />
                     <span>Upload First Video</span>
@@ -974,18 +1055,16 @@ export const UploadVideo = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {selectedCourse.videos.map((video, index) => (
+                  {selectedCourse.videos.map((video) => (
                     <div
                       key={video.id}
                       className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      <div className="flex-shrink-0">
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="w-20 h-12 object-cover rounded"
-                        />
-                      </div>
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-20 h-12 object-cover rounded"
+                      />
                       <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-medium text-gray-900 truncate">
                           {video.title}
@@ -1030,6 +1109,7 @@ export const UploadVideo = () => {
     </div>
   );
 
+  const [src, setSrc] = useState('/brand_logo' + '.' + branding.ext);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -1037,10 +1117,15 @@ export const UploadVideo = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-white" />
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: `${brandColor}20` }}
+              >
+                <img src={src} className="w-5 h-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">EduHub</h1>
+              <h1 className="text-xl font-bold text-gray-900">
+                {branding.brandName}
+              </h1>
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import {
   addVideosToPlayList,
   createPlaylist,
   deleteVideosFromPlayList,
+  getAllPlaylistOfBrand,
 } from '../api/playlistAPI';
 
 const initialState = {
@@ -66,6 +67,19 @@ const playlistSlice = createSlice({
         }
       })
       .addCase(deleteVideosFromPlayList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getAllPlaylistOfBrand.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllPlaylistOfBrand.fulfilled, (state, action) => {
+        console.log('Playlists fetched:', action.payload.data);
+        state.loading = false;
+        state.playlists = action.payload.data;
+      })
+      .addCase(getAllPlaylistOfBrand.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

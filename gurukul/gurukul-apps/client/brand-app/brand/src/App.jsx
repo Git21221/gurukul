@@ -18,6 +18,7 @@ import { FounderHome } from './pages/founder/home/FounderHome';
 import { SignUpEducator } from './components/signup/educator/SignUpEducator';
 import { EducatorHome } from './pages/educator/home/EducatorHome';
 import { UploadVideo } from './pages/educator/upload/UploadVideo';
+import { AllCourse } from './pages/educator/course/AllCourse';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
@@ -82,6 +83,7 @@ function App() {
                   path="/educator/upload-video"
                   element={<UploadVideo />}
                 />
+                <Route path="/educator/courses" element={<AllCourse />} />
               </Route>
             </Route>
             {/* for student routes */}

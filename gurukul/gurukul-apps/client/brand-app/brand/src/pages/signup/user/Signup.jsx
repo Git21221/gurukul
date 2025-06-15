@@ -30,7 +30,7 @@ const Signup = () => {
   const [error, setError] = useState('');
 
   const { branding } = useSelector((state) => state.brandDetails);
-  const [src, setSrc] = useState('/brand_logo' + '.' + branding.brandLogo);
+  const [src, setSrc] = useState('/brand_logo' + '.' + branding.ext);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

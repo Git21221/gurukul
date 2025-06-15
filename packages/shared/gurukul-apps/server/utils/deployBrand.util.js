@@ -137,13 +137,6 @@ export const deployBrand = async ({
         VITE_MAIN_SERVER_PORT: '4000',
         VITE_BRAND_SERVER_PORT: '4001',
       },
-      customRules: [
-        {
-          source: '/^((?!\\.).)*$',
-          target: '/index.html',
-          status: '200',
-        },
-      ],
     });
     await amplify.send(createBranchCommand);
     await amplify.send(updateBranchCommand);

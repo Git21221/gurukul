@@ -17,7 +17,7 @@ export const sidebarBrandList = [
     title: 'Courses',
     component: CourseLogo,
     path: 'courses',
-    roles: ['user'],
+    roles: ['user', 'educator', 'founder'],
   },
   {
     title: 'Articles',

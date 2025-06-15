@@ -202,4 +202,40 @@ const removeVideosFromPlaylist = asyncFuncHandler(async (req, res) => {
   )(res);
 });
 
-export { createPlaylist, addVideosToPlaylist, removeVideosFromPlaylist };
+const getAllPlaylistOfBrand = asyncFuncHandler(async (req, res) => {
+  const role = req?.role;
+  if (role !== roles.EDUCATOR && role !== roles.FOUNDER) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      'Unauthorized access, restricted to educator and founder only'
+    )(res);
+  }
+  const { brandId } = req?.params;
+  //check if brandId is valid for this user
+  const isAuthorised = await verifyBrandWithUser(role, brandId, req.user._id);
+  if (!isAuthorised) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      'Unauthorized access, you are not associated with this brand'
+    )(res);
+  }
+  //get all playlists of brand
+  const playlists = await Playlist.find({ belongs_to_brand: brandId })
+    .populate('videos')
+    .sort({ createdAt: -1 });
+  if (!playlists || playlists.length === 0) {
+    return success(statusCodes.OK, 'No playlists found', [])(res);
+  }
+  return success(
+    statusCodes.OK,
+    'Playlists fetched successfully',
+    playlists
+  )(res);
+});
+
+export {
+  createPlaylist,
+  addVideosToPlaylist,
+  removeVideosFromPlaylist,
+  getAllPlaylistOfBrand,
+};

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const playlistSchema = new mongoose.Schema(
   {
@@ -13,16 +13,21 @@ const playlistSchema = new mongoose.Schema(
     videos: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Video",
+        ref: 'Video',
       },
     ],
     created_by_educator: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Educator",
+      ref: 'Educator',
     },
     created_by_founder: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Founder",
+      ref: 'Founder',
+    },
+    belongs_to_brand: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Brand',
+      required: true,
     },
   },
   {
@@ -30,4 +35,4 @@ const playlistSchema = new mongoose.Schema(
   }
 );
 
-export const Playlist = mongoose.model("Playlist", playlistSchema);
+export const Playlist = mongoose.model('Playlist', playlistSchema);

@@ -7,7 +7,7 @@ const BrandLogoStep = ({ logo, logoType, onLogoChange }) => {
   const iconOptions = [
     { icon: Star, name: 'Star' },
     { icon: Heart, name: 'Heart' },
-    { icon: Zap, name: 'Lightning' },
+    { icon: Zap, name: 'Zap' },
     { icon: Shield, name: 'Shield' },
     { icon: Crown, name: 'Crown' },
     { icon: Gem, name: 'Gem' },

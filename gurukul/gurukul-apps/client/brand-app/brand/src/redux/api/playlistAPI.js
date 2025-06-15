@@ -75,3 +75,23 @@ export const deleteVideosFromPlayList = createAsyncThunk(
     }
   }
 );
+
+export const getAllPlaylistOfBrand = createAsyncThunk(
+  'playlist/getAllPlaylistOfBrand',
+  async ({ dispatch, brandId, source = 'brand' }, { rejectWithValue }) => {
+    try {
+      console.log('Get All Playlist of Brand for Brand ID:', brandId);
+      const res = await apiClient(
+        dispatch,
+        `playlist/get-playlist/${brandId}`,
+        'GET',
+        {},
+        source
+      );
+      return res;
+    } catch (error) {
+      console.log('Get All Playlist of Brand error:', error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
