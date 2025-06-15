@@ -14,6 +14,7 @@ import { Helmet } from 'react-helmet';
 import DashboardLayout from './components/DashboardLayout';
 import PublicLayout from './components/PublicLayout';
 import Signup from './pages/signup/user/Signup';
+import { FounderHome } from './pages/founder/home/FounderHome';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
@@ -67,10 +68,7 @@ function App() {
               {/* for admin routes */}
               <Route element={<FounderRoute userRole={userRole} />}>
                 <Route element={<DashboardLayout />}>
-                  <Route
-                    path="/founder/home"
-                    element={<div>Founder Home</div>}
-                  />
+                  <Route path="/founder/home" element={<FounderHome />} />
                 </Route>
               </Route>
               {/* for educator routes */}

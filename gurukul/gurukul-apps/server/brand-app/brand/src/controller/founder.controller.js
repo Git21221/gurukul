@@ -8,10 +8,11 @@ import {
   error,
   Founder,
   generateAccessAndRefreshTokenforFounder,
+  Referral,
   refreshTokenOptions,
   success,
 } from '@gurukul/shared-server';
-import { statusCodes } from '../../../../config/constants.js';
+import { roles, statusCodes } from '../../../../config/constants.js';
 import jwt from 'jsonwebtoken';
 import env from '../../../../../../../env.js';
 
@@ -47,7 +48,10 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
     )(res);
   }
   //cehck if founder created this brand
-  const founderBrand = await Brand.findOne({ established_by: founder._id });
+  const founderBrand = await Brand.findOne({
+    id: brandId,
+    established_by: founder._id,
+  });
   if (!founderBrand) {
     return error(
       statusCodes.UNAUTHORIZED,
@@ -97,6 +101,93 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
     );
 });
 
+const createReferral = asyncFuncHandler(async (req, res) => {
+  const role = req.role;
+  if (role !== roles.FOUNDER) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      'Unauthorized access, restricted to founder only'
+    )(res);
+  }
+  const { minLength, maxLength } = req?.query;
+  const { brandId } = req?.params;
+  //create a unique code for referral
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const length =
+    Math.floor(Math.random() * (Number(maxLength) - Number(minLength) + 1)) +
+    Number(minLength);
+  let code = '';
+
+  for (let i = 0; i < length; i++) {
+    code += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  //check if the code already exists in the database
+  const existingCode = await Referral.find({ referral_code: code });
+  if (existingCode.length !== 0) {
+    return error(
+      statusCodes.BAD_REQUEST,
+      'Code already exists, please try again'
+    )(res);
+  }
+
+  //now create a jwt and save it to the database
+  const token = jwt.sign(
+    { referral_code: code, brandId, founder_id: req.user._id },
+    env.JWT_REFERRAL_TOKEN,
+    { expiresIn: env.JWT_REFERRAL_TOKEN_EXPIRES_IN }
+  );
+
+  //save the code to the database
+  const referral = await Referral.create({
+    referral_code: code,
+    founder_id: req.user._id,
+    brand_id: brandId,
+    token,
+  });
+
+  if (!referral) {
+    return error(
+      statusCodes.INTERNAL_SERVER_ERROR,
+      'Failed to create referral code for some unknown reason'
+    )(res);
+  }
+  return success(
+    statusCodes.CREATED,
+    'Referral code created successfully',
+    referral
+  )(res);
+});
+
+const getReferralToken = asyncFuncHandler(async (req, res) => {
+  const role = req.role;
+  if (role !== roles.FOUNDER) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      'Unauthorized access, restricted to founder only'
+    )(res);
+  }
+  //get the referral token that is not used
+  const existingCode = await Referral.find({ used: false }).select({
+    token: 1,
+  });
+
+  if (existingCode.length === 0) {
+    return error(
+      statusCodes.NOT_FOUND,
+      'No referral token found, please create a new one'
+    )(res);
+  }
+
+  //send all the token to founder
+  return success(
+    statusCodes.OK,
+    'Referral token found successfully',
+    existingCode
+  )(res);
+});
+
 const verifyToken = asyncFuncHandler(async (req, res) => {
   const accessToken = req?.cookies?.accessToken;
   if (!accessToken) {
@@ -132,4 +223,10 @@ const verifyRole = asyncFuncHandler(async (req, res, next) => {
   }
 });
 
-export { loginFounder, verifyToken, verifyRole };
+export {
+  loginFounder,
+  createReferral,
+  getReferralToken,
+  verifyToken,
+  verifyRole,
+};
