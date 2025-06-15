@@ -65,7 +65,7 @@ const Hero = () => {
                 </Link>
               ) : userRole === 'educator' ? (
                 <Link
-                  tp="/educator/home"
+                  to="/educator/home"
                   className="px-8 py-4 rounded-lg text-white font-semibold text-lg transition-all duration-200 hover:opacity-90 hover:transform hover:scale-105 shadow-lg"
                   style={{ backgroundColor: branding.brandColor }}
                 >

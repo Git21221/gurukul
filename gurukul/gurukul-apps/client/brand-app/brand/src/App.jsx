@@ -16,6 +16,8 @@ import PublicLayout from './components/PublicLayout';
 import Signup from './pages/signup/user/Signup';
 import { FounderHome } from './pages/founder/home/FounderHome';
 import { SignUpEducator } from './components/signup/educator/SignUpEducator';
+import { EducatorHome } from './pages/educator/home/EducatorHome';
+import { UploadVideo } from './pages/educator/upload/UploadVideo';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
@@ -63,30 +65,29 @@ function App() {
               }
             />
             <Route path="/signup/educator" element={<SignUpEducator />} />
-            {/* protected routes */}
-            <Route
-              element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
-            >
-              {/* for admin routes */}
-              <Route element={<FounderRoute userRole={userRole} />}>
-                <Route element={<DashboardLayout />}>
-                  <Route path="/founder/home" element={<FounderHome />} />
-                </Route>
+          </Route>
+          {/* protected routes */}
+          <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+            {/* for admin routes */}
+            <Route element={<FounderRoute userRole={userRole} />}>
+              <Route element={<DashboardLayout />}>
+                <Route path="/founder/home" element={<FounderHome />} />
               </Route>
-              {/* for educator routes */}
-              <Route element={<EducatorRoute userRole={userRole} />}>
-                <Route element={<DashboardLayout />}>
-                  <Route
-                    path="/educator/home"
-                    element={<div>Educator Home</div>}
-                  />
-                </Route>
+            </Route>
+            {/* for educator routes */}
+            <Route element={<EducatorRoute userRole={userRole} />}>
+              <Route element={<DashboardLayout />}>
+                <Route path="/educator/home" element={<EducatorHome />} />
+                <Route
+                  path="/educator/upload-video"
+                  element={<UploadVideo />}
+                />
               </Route>
-              {/* for student routes */}
-              <Route element={<UserRoute userRole={userRole} />}>
-                <Route element={<DashboardLayout />}>
-                  <Route path="/user/home" element={<div>user Home</div>} />
-                </Route>
+            </Route>
+            {/* for student routes */}
+            <Route element={<UserRoute userRole={userRole} />}>
+              <Route element={<DashboardLayout />}>
+                <Route path="/user/home" element={<div>user Home</div>} />
               </Route>
             </Route>
           </Route>

@@ -36,10 +36,10 @@ export function Sidebar() {
 
       {/* Sidebar Drawer */}
       <div
-        className="fixed top-16 left-0 z-50 h-[calc(100%-4rem)] bg-white overflow-hidden transition-[width] duration-300 ease-in-out"
+        className="fixed left-0 z-50 h-full bg-white overflow-hidden transition-[width] duration-300 ease-in-out"
         style={{
           width: isSidebarOpen ? '16rem' : '4.5rem', // 64 => 256px, 18 => 72px
-          boxShadow: `0 6px 4px ${branding.brandColor}`,
+          // boxShadow: `0 6px 4px ${branding.brandColor}`,
         }}
       >
         <nav className={`pt-4 ${isSidebarOpen ? '' : 'pr-1'}`}>

@@ -4,19 +4,21 @@ import {
   HomeLogo,
   UpdatesLogo,
 } from '@gurukul/shared-client';
+import path from 'path';
+import { RiVideoUploadLine } from 'react-icons/ri';
 
 export const sidebarBrandList = [
   {
     title: 'Home',
     component: HomeLogo,
     path: 'home',
-    roles: ['founder', 'user', 'public'], // Visible to everyone
+    roles: ['founder', 'user', 'educator', 'public'],
   },
   {
     title: 'Courses',
     component: CourseLogo,
     path: 'courses',
-    roles: ['user'], // Only for 'user'
+    roles: ['user'],
   },
   {
     title: 'Articles',
@@ -29,5 +31,11 @@ export const sidebarBrandList = [
     component: UpdatesLogo,
     path: 'updates',
     roles: ['founder'],
+  },
+  {
+    title: 'Upload',
+    component: RiVideoUploadLine,
+    path: 'upload-video',
+    roles: ['educator'],
   },
 ];
