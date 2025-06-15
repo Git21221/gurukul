@@ -63,7 +63,7 @@ const registerEducator = asyncFuncHandler(async (req, res) => {
 
   //create new educator
   const educator = await Educator.create({
-    emailId: email,
+    email,
     fullName,
     password,
     referral: referral[0]._id,

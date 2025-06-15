@@ -30,15 +30,9 @@ const Signup = () => {
   const [error, setError] = useState('');
 
   const { branding } = useSelector((state) => state.brandDetails);
-  const [src, setSrc] = useState('/brand_logo.svg');
+  const [src, setSrc] = useState('/brand_logo' + '.' + branding.brandLogo);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const handleError = () => {
-    if (src.endsWith('.svg')) setSrc('/brand_logo.png');
-    else if (src.endsWith('.png')) setSrc('/brand_logo.jpg');
-    else setSrc('/brand_logo.jpeg');
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -144,7 +138,6 @@ const Signup = () => {
               >
                 <img
                   src={src}
-                  onError={handleError}
                   alt="Brand Logo"
                   className="h-8 w-8"
                   style={{ color: branding.brandColor }}

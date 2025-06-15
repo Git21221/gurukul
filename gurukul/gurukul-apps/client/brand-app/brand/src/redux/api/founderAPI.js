@@ -54,7 +54,7 @@ export const createReferral = createAsyncThunk(
 export const getReferral = createAsyncThunk(
   'founder/getReferral',
   async (
-    { dispatch, data, brandId, source = 'brand' },
+    { dispatch, token, brandId, source = 'brand' },
     { rejectWithValue }
   ) => {
     try {
@@ -62,15 +62,38 @@ export const getReferral = createAsyncThunk(
       const res = await apiClient(
         dispatch,
         `founder/get-referral`,
-        'POST',
-        {
-          body: JSON.stringify(data),
-        },
+        'GET',
+        {},
         source
       );
       return res;
     } catch (error) {
       console.log('Get Referral error:', error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const verifyReferralToken = createAsyncThunk(
+  'founder/verifyReferralToken',
+  async (
+    { dispatch, token, brandId, source = 'brand' },
+    { rejectWithValue }
+  ) => {
+    try {
+      console.log('Verify Referral Token:', token, 'Brand ID:', brandId);
+      const res = await apiClient(
+        dispatch,
+        `founder/verify-referral-token/${brandId}`,
+        'POST',
+        {
+          body: JSON.stringify({ token }),
+        },
+        source
+      );
+      return res;
+    } catch (error) {
+      console.log('Verify Referral Token error:', error);
       return rejectWithValue(error.message);
     }
   }

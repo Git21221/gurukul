@@ -15,6 +15,7 @@ import DashboardLayout from './components/DashboardLayout';
 import PublicLayout from './components/PublicLayout';
 import Signup from './pages/signup/user/Signup';
 import { FounderHome } from './pages/founder/home/FounderHome';
+import { SignUpEducator } from './components/signup/educator/SignUpEducator';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
@@ -61,6 +62,7 @@ function App() {
                 !isAuthenticated ? <Signup /> : <Navigate to={'/'} replace />
               }
             />
+            <Route path="/signup/educator" element={<SignUpEducator />} />
             {/* protected routes */}
             <Route
               element={<ProtectedRoute isAuthenticated={isAuthenticated} />}

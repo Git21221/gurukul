@@ -26,13 +26,7 @@ const Login = ({ onBack }) => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { branding } = useSelector((state) => state.brandDetails);
-  const [src, setSrc] = useState('/brand_logo.svg');
-
-  const handleError = () => {
-    if (src.endsWith('.svg')) setSrc('/brand_logo.png');
-    else if (src.endsWith('.png')) setSrc('/brand_logo.jpg');
-    else setSrc('/brand_logo.jpeg');
-  };
+  const [src, setSrc] = useState('/brand_logo' + '.' + branding?.ext);
   const roles = [
     {
       id: 'user',
@@ -137,7 +131,6 @@ const Login = ({ onBack }) => {
                   alt="Brand Logo"
                   className="h-8 w-8"
                   style={{ color: branding.brandColor }}
-                  onError={handleError}
                 />
               </div>
               <span

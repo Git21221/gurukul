@@ -3,6 +3,7 @@ import {
   createReferral,
   getReferralToken,
   loginFounder,
+  verifyReferralToken,
   verifyRole,
   verifyToken,
 } from '../controller/founder.controller.js';
@@ -17,5 +18,8 @@ founderRouter
 founderRouter
   .route('/get-referral')
   .post(verifyROLE, verifyJWT, getReferralToken);
+founderRouter
+  .route('/verify-referral-token/:brandId')
+  .post(verifyReferralToken);
 founderRouter.route('/verify-token').get(verifyToken);
 founderRouter.route('/verify-role').get(verifyRole);

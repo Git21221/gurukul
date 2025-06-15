@@ -188,6 +188,53 @@ const getReferralToken = asyncFuncHandler(async (req, res) => {
   )(res);
 });
 
+const verifyReferralToken = asyncFuncHandler(async (req, res) => {
+  const { token } = req?.body;
+  const { brandId } = req?.params;
+  if (!token) {
+    return error(statusCodes.BAD_REQUEST, 'Token is required')(res);
+  }
+  try {
+    const decoded = jwt.verify(token, env.JWT_REFERRAL_TOKEN);
+    //check if the token is already used
+    const existingCode = await Referral.findOne({
+      referral_code: decoded.referral_code,
+      used: false,
+    });
+
+    if (!existingCode) {
+      return error(
+        statusCodes.NOT_FOUND,
+        'Referral token not found or already used'
+      )(res);
+    }
+    //check if the brandId matches
+    if (brandId !== decoded.brandId) {
+      return error(
+        statusCodes.UNAUTHORIZED,
+        'This referral token does not belong to your brand'
+      )(res);
+    }
+    //check if the founder_id matches
+    if (existingCode.founder_id.toString() !== decoded.founder_id) {
+      return error(
+        statusCodes.UNAUTHORIZED,
+        'This referral token does not belong to your account'
+      )(res);
+    }
+    return success(
+      statusCodes.OK,
+      'Referral token is valid and marked as used',
+      decoded
+    )(res);
+  } catch (err) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      'Invalid or expired referral token'
+    )(res);
+  }
+});
+
 const verifyToken = asyncFuncHandler(async (req, res) => {
   const accessToken = req?.cookies?.accessToken;
   if (!accessToken) {
@@ -227,6 +274,7 @@ export {
   loginFounder,
   createReferral,
   getReferralToken,
+  verifyReferralToken,
   verifyToken,
   verifyRole,
 };

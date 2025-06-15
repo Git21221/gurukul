@@ -1,0 +1,5 @@
+.branded-input:focus {
+  border-color: var(--brand-focus);
+  box-shadow: 0 0 0 2px var(--brand-focus);
+  background-color: #ffffff;
+}

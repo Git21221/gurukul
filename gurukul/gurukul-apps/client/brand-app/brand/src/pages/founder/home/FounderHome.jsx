@@ -23,6 +23,13 @@ import {
   X,
   LinkIcon,
 } from 'lucide-react';
+import {
+  Copy,
+  MessageCircle,
+  MessageSquare,
+  Check,
+  Sparkles,
+} from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createReferral } from '../../../redux/api/founderAPI';
 
@@ -153,70 +160,234 @@ export const FounderHome = () => {
     </div>
   );
 
-  const AddEducatorModal = () => {
+  const AddEducatorModal = ({ isOpen, onClose, brandColor }) => {
     const [referralLink, setReferralLink] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [copied, setCopied] = useState(false);
     const dispatch = useDispatch();
     const data = {};
     let dummyReferralId = '';
     const generateReferralLink = () => {
+      setIsGenerating(true);
       dispatch(
         createReferral({ dispatch, data, brandId: branding.brandId })
       ).then((res) => {
         res.payload.statusCode < 400
           ? (dummyReferralId = res.payload.data.token)
           : null;
-        const link = `${window.location.origin}/register/signup?ref=${dummyReferralId}`;
+        const link = `${window.location.origin}/signup/educator?token=${dummyReferralId}`;
         setReferralLink(link);
+        setIsGenerating(false);
       });
     };
 
+    const copyToClipboard = async () => {
+      try {
+        await navigator.clipboard.writeText(referralLink);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy text: ', err);
+      }
+    };
+    const shareOptions = [
+      {
+        name: 'WhatsApp',
+        icon: MessageCircle,
+        color: 'bg-green-500 hover:bg-green-600',
+        url: `https://wa.me/?text=${encodeURIComponent(`Join our education platform! Sign up with this exclusive link: ${referralLink}`)}`,
+      },
+      {
+        name: 'Email',
+        icon: Mail,
+        color: 'bg-blue-600 hover:bg-blue-700',
+        url: `mailto:?subject=Join%20Our%20Education%20Platform&body=Hi!%0A%0AI'd%20like%20to%20invite%20you%20to%20join%20our%20education%20platform.%20Sign%20up%20with%20this%20exclusive%20link:%0A%0A${encodeURIComponent(referralLink)}%0A%0ALooking%20forward%20to%20having%20you%20on%20board!`,
+      },
+      {
+        name: 'SMS',
+        icon: MessageSquare,
+        color: 'bg-purple-600 hover:bg-purple-700',
+        url: `sms:?body=🎓%20Join%20our%20education%20platform:%20${encodeURIComponent(referralLink)}`,
+      },
+    ];
+    if (!isOpen) return null;
     return (
-      <div
-        className="fixed inset-0 flex items-center justify-center z-50 p-4"
-        style={{
-          backgroundColor: `${branding.brandColor}10`,
-          backdropFilter: 'blur(10px)',
-        }}
-      >
-        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
-                Invite Educator
-              </h2>
+      <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+          onClick={onClose}
+        />
+
+        {/* Modal */}
+        <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full transform transition-all duration-300 scale-100">
+          {/* Header */}
+          <div className="relative p-8 pb-6">
+            <div
+              className="absolute top-0 left-0 w-full h-24 rounded-t-3xl opacity-5"
+              style={{ backgroundColor: brandColor }}
+            />
+            <div className="relative flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div
+                  className="p-3 rounded-2xl shadow-lg"
+                  style={{ backgroundColor: `${brandColor}15` }}
+                >
+                  <Sparkles className="h-6 w-6" style={{ color: brandColor }} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Invite Educator
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Share access to our platform
+                  </p>
+                </div>
+              </div>
               <button
-                onClick={() => setShowAddEducator(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 rounded-xl transition-colors duration-200 group"
               >
-                <X className="h-6 w-6 text-gray-500" />
+                <X className="h-5 w-5 text-gray-400 group-hover:text-gray-600" />
               </button>
             </div>
+          </div>
 
-            <div className="space-y-4">
-              {!referralLink ? (
+          {/* Content */}
+          <div className="px-8 pb-8">
+            {!referralLink ? (
+              <div className="text-center">
+                <div className="mb-6">
+                  <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center mb-4">
+                    <LinkIcon className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <p className="text-gray-600 leading-relaxed">
+                    Generate a unique referral link to invite educators to join
+                    your platform. They'll get instant access upon registration.
+                  </p>
+                </div>
+
                 <button
                   onClick={generateReferralLink}
-                  className="w-full px-6 py-3 text-white rounded-lg font-medium transition-all duration-200 hover:opacity-90"
-                  style={{ backgroundColor: branding.brandColor }}
+                  disabled={isGenerating}
+                  className="w-full px-8 py-4 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden group"
+                  style={{ backgroundColor: brandColor }}
                 >
-                  Generate Referral Link
+                  <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                  <span className="relative flex items-center justify-center">
+                    {isGenerating ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white mr-3" />
+                        Generating Link...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-5 w-5 mr-2" />
+                        Generate Referral Link
+                      </>
+                    )}
+                  </span>
                 </button>
-              ) : (
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <div className="flex items-center space-x-2 text-gray-700">
-                    <LinkIcon className="h-5 w-5 text-gray-500" />
-                    <a
-                      href={referralLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="break-all underline"
-                    >
-                      {referralLink}
-                    </a>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Generated Link Display */}
+                <div className="bg-gradient-to-r from-gray-50 to-blue-50/30 p-6 rounded-2xl border border-gray-100">
+                  <div className="flex items-start space-x-3 mb-4">
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <Check className="h-4 w-4 text-green-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900 mb-1">
+                        Link Generated Successfully!
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        Share this link with educators to invite them
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <div className="flex items-center space-x-3">
+                      <LinkIcon className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-700 break-all font-mono bg-gray-50 px-3 py-2 rounded-lg">
+                          {referralLink}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Copy Button */}
+                  <button
+                    onClick={copyToClipboard}
+                    className="w-full mt-4 px-4 py-3 bg-white border border-gray-200 hover:border-gray-300 rounded-xl font-medium transition-all duration-200 hover:shadow-sm group flex items-center justify-center"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="h-4 w-4 text-green-600 mr-2" />
+                        <span className="text-green-600">
+                          Copied to Clipboard!
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4 text-gray-500 mr-2 group-hover:text-gray-700" />
+                        <span className="text-gray-700">Copy Link</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Sharing Options */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <span>Share Invitation</span>
+                    <div className="ml-2 h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent" />
+                  </h3>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    {shareOptions.map((option, index) => {
+                      const Icon = option.icon;
+                      return (
+                        <a
+                          key={option.name}
+                          href={option.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`${option.color} text-white px-6 py-4 rounded-2xl font-medium transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg flex items-center justify-center group relative overflow-hidden`}
+                          style={{ animationDelay: `${index * 100}ms` }}
+                        >
+                          <div className="absolute inset-0 bg-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                          <Icon className="h-5 w-5 mr-3 relative z-10" />
+                          <span className="relative z-10">
+                            Share via {option.name}
+                          </span>
+                        </a>
+                      );
+                    })}
+                  </div>
+
+                  {/* Additional Info */}
+                  <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <div className="flex items-start space-x-3">
+                      <div className="p-1 bg-blue-100 rounded-lg">
+                        <Sparkles className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-blue-800 font-medium mb-1">
+                          Pro Tip
+                        </p>
+                        <p className="text-sm text-blue-700">
+                          This link is unique and trackable. You'll be notified
+                          when someone signs up using your invitation.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -500,7 +671,13 @@ export const FounderHome = () => {
       </div>
 
       {/* Add Educator Modal */}
-      {showAddEducator && <AddEducatorModal />}
+      {showAddEducator && (
+        <AddEducatorModal
+          isOpen={showAddEducator}
+          onClose={() => setShowAddEducator(false)}
+          brandColor={branding.brandColor}
+        />
+      )}
     </div>
   );
 };
