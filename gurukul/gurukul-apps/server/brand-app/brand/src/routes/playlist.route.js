@@ -3,6 +3,7 @@ import {
   addVideosToPlaylist,
   createPlaylist,
   getAllPlaylistOfBrand,
+  getSinglePlaylist,
   removeVideosFromPlaylist,
 } from '../controller/playlist.controller.js';
 import { verifyJWT, verifyROLE } from '@gurukul/shared-server';
@@ -27,4 +28,10 @@ playlistRouter.get(
   verifyROLE,
   verifyJWT,
   getAllPlaylistOfBrand
+);
+playlistRouter.get(
+  '/get-single-playlist/:brandId/:playlistId',
+  verifyROLE,
+  verifyJWT,
+  getSinglePlaylist
 );

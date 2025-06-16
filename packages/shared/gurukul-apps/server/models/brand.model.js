@@ -1,13 +1,11 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const BrandSchema = new mongoose.Schema(
   {
-    established_by: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Founder",
-      },
-    ],
+    established_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Founder',
+    },
     name: {
       type: String,
       required: true,
@@ -18,7 +16,7 @@ const BrandSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    logo: { 
+    logo: {
       type: String,
       required: true,
       trim: true,
@@ -34,4 +32,4 @@ const BrandSchema = new mongoose.Schema(
   }
 );
 
-export const Brand = mongoose.model("Brand", BrandSchema);
+export const Brand = mongoose.model('Brand', BrandSchema);

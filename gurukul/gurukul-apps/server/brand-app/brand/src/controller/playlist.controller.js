@@ -204,12 +204,12 @@ const removeVideosFromPlaylist = asyncFuncHandler(async (req, res) => {
 
 const getAllPlaylistOfBrand = asyncFuncHandler(async (req, res) => {
   const role = req?.role;
-  if (role !== roles.EDUCATOR && role !== roles.FOUNDER) {
-    return error(
-      statusCodes.UNAUTHORIZED,
-      'Unauthorized access, restricted to educator and founder only'
-    )(res);
-  }
+  // if (role !== roles.EDUCATOR && role !== roles.FOUNDER) {
+  //   return error(
+  //     statusCodes.UNAUTHORIZED,
+  //     'Unauthorized access, restricted to educator and founder only'
+  //   )(res);
+  // }
   const { brandId } = req?.params;
   //check if brandId is valid for this user
   const isAuthorised = await verifyBrandWithUser(role, brandId, req.user._id);
@@ -233,9 +233,40 @@ const getAllPlaylistOfBrand = asyncFuncHandler(async (req, res) => {
   )(res);
 });
 
+const getSinglePlaylist = asyncFuncHandler(async (req, res) => {
+  const { playlistId, brandId } = req.params;
+  if (!brandId) {
+    return error(statusCodes.BAD_REQUEST, 'Brand ID is required')(res);
+  }
+  const isAuthorised = await verifyBrandWithUser(
+    req.role,
+    brandId,
+    req.user._id
+  );
+  if (!isAuthorised) {
+    return error(
+      statusCodes.UNAUTHORIZED,
+      'Unauthorized access, you are not associated with this brand'
+    )(res);
+  }
+  if (!playlistId) {
+    return error(statusCodes.BAD_REQUEST, 'Playlist ID is required')(res);
+  }
+  const playlist = await Playlist.findById(playlistId).populate('videos');
+  if (!playlist) {
+    return error(statusCodes.NOT_FOUND, 'Playlist not found')(res);
+  }
+  return success(
+    statusCodes.OK,
+    'Playlist fetched successfully',
+    playlist
+  )(res);
+});
+
 export {
   createPlaylist,
   addVideosToPlaylist,
   removeVideosFromPlaylist,
   getAllPlaylistOfBrand,
+  getSinglePlaylist,
 };

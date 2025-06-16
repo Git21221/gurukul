@@ -1,4 +1,4 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import {
   asyncFuncHandler,
   AudioMetaData,
@@ -10,10 +10,10 @@ import {
   verifyBrandWithUser,
   Video,
   VideoMetaData,
-} from "@gurukul/shared-server";
-import { roles, statusCodes } from "../../../../config/constants.js";
-import env from "../../../../../../../env.js";
-import mongoose from "mongoose";
+} from '@gurukul/shared-server';
+import { roles, statusCodes } from '../../../../config/constants.js';
+import env from '../../../../../../../env.js';
+import mongoose from 'mongoose';
 
 const s3 = new S3Client({
   region: env.AWS_REGION,
@@ -28,19 +28,19 @@ const uploadVideo = asyncFuncHandler(async (req, res) => {
   if (role !== roles.EDUCATOR && role !== roles.FOUNDER) {
     return error(
       statusCodes.UNAUTHORIZED,
-      "Unauthorized access, restricted to educator and founder only"
+      'Unauthorized access, restricted to educator and founder only'
     )(res);
   }
   const brandId = req.params.brandId;
   if (!brandId) {
-    return error(statusCodes.BAD_REQUEST, "Brand ID is required")(res);
+    return error(statusCodes.BAD_REQUEST, 'Brand ID is required')(res);
   }
   // Check if the brandId is valid for this user
   const isAuthorised = await verifyBrandWithUser(role, brandId, req.user._id);
   if (!isAuthorised) {
     return error(
       statusCodes.UNAUTHORIZED,
-      "Unauthorized access, you are not associated with this brand"
+      'Unauthorized access, you are not associated with this brand'
     )(res);
   }
   const BrandDetails = await Brand.findById(brandId, {
@@ -48,7 +48,7 @@ const uploadVideo = asyncFuncHandler(async (req, res) => {
     name: 1,
   });
   if (!BrandDetails) {
-    return error(statusCodes.NOT_FOUND, "Brand not found")(res);
+    return error(statusCodes.NOT_FOUND, 'Brand not found')(res);
   }
   const founderName = await Founder.findById(BrandDetails.established_by, {
     fullName: 1,
@@ -57,12 +57,12 @@ const uploadVideo = asyncFuncHandler(async (req, res) => {
   const videoFile = req.file;
   const { title, description } = req.body;
   if (!videoFile) {
-    return error(statusCodes.BAD_REQUEST, "No video file uploaded")(res);
+    return error(statusCodes.BAD_REQUEST, 'No video file uploaded')(res);
   }
   if (!title) {
-    return error(statusCodes.BAD_REQUEST, "Title is required")(res);
+    return error(statusCodes.BAD_REQUEST, 'Title is required')(res);
   }
-  console.log("Video file details:", videoFile);
+  console.log('Video file details:', videoFile);
   const { originalname, mimetype, buffer, size } = videoFile;
   const fileName = `${Date.now()}-${originalname}`;
   const filePath = `videos-${brandName}-${founderName.fullName}/${fileName}`;
@@ -73,13 +73,14 @@ const uploadVideo = asyncFuncHandler(async (req, res) => {
     Key: filePath,
     Body: buffer,
     ContentType: mimetype,
+    ACL: 'public-read',
   });
   const uploadToAwsS3 = await s3.send(command);
-  console.log("Upload to S3 response:", uploadToAwsS3);
+  console.log('Upload to S3 response:', uploadToAwsS3);
   if (uploadToAwsS3.$metadata.httpStatusCode !== 200) {
     return error(
       statusCodes.INTERNAL_SERVER_ERROR,
-      "Failed to upload video to S3"
+      'Failed to upload video to S3'
     )(res);
   }
   const object_url = `https://${env.AWS_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${filePath}`;
@@ -88,21 +89,21 @@ const uploadVideo = asyncFuncHandler(async (req, res) => {
   const { duration, metadata } = await getVideoMetaData(buffer, originalname);
   const etag = uploadToAwsS3.ETag;
   // video metadata
-  const codec_name = metadata?.streams[0].codec_name || "Unknown";
+  const codec_name = metadata?.streams[0].codec_name || 'Unknown';
   const width = metadata?.streams[0].width;
   const height = metadata?.streams[0].height;
   const coded_width = metadata?.streams[0].coded_width || width;
   const coded_height = metadata?.streams[0].coded_height || height;
-  const aspect_ratio = metadata?.streams[0].aspect_ratio || "16:9";
-  const frame_rate = metadata?.streams[0].avg_frame_rate.split("/")[0] || 30;
+  const aspect_ratio = metadata?.streams[0].aspect_ratio || '16:9';
+  const frame_rate = metadata?.streams[0].avg_frame_rate.split('/')[0] || 30;
   const bits_per_sample = metadata?.streams[0].bits_per_raw_sample || 8;
 
   //audio metadata
-  const audio_codec_name = metadata?.streams[1].codec_name || "Unknown";
+  const audio_codec_name = metadata?.streams[1].codec_name || 'Unknown';
   const sample_rate = metadata?.streams[1].sample_rate || 44100;
-  const profile = metadata?.streams[1].profile || "Unknown";
+  const profile = metadata?.streams[1].profile || 'Unknown';
   const channels = metadata?.streams[1].channels || 2;
-  const channel_layout = metadata?.streams[1].channel_layout || "stereo";
+  const channel_layout = metadata?.streams[1].channel_layout || 'stereo';
   //save the video details to the database
   const videoData = {
     title,
@@ -136,7 +137,7 @@ const uploadVideo = asyncFuncHandler(async (req, res) => {
   if (!videoMetaDataId) {
     return error(
       statusCodes.INTERNAL_SERVER_ERROR,
-      "Failed to save video metadata"
+      'Failed to save video metadata'
     )(res);
   }
   videoData.video_metadata = videoMetaDataId._id;
@@ -151,13 +152,13 @@ const uploadVideo = asyncFuncHandler(async (req, res) => {
   if (!audioMetaDataId) {
     return error(
       statusCodes.INTERNAL_SERVER_ERROR,
-      "Failed to save audio metadata"
+      'Failed to save audio metadata'
     )(res);
   }
   videoData.audio_metadata = audioMetaDataId._id;
-  console.log("Video data to be saved:", videoData);
+  console.log('Video data to be saved:', videoData);
   const video = await Video.create(videoData);
-  return success(statusCodes.OK, "Video uploaded successfully", video)(res);
+  return success(statusCodes.OK, 'Video uploaded successfully', video)(res);
 });
 
 const getSingleVideo = asyncFuncHandler(async (req, res) => {
@@ -169,68 +170,68 @@ const getSingleVideo = asyncFuncHandler(async (req, res) => {
   if (!isAuthorised) {
     return error(
       statusCodes.UNAUTHORIZED,
-      "Unauthorized access, you are not associated with this brand"
+      'Unauthorized access, you are not associated with this brand'
     )(res);
   }
   const videoId = req.params.videoId;
   if (!videoId) {
-    return error(statusCodes.BAD_REQUEST, "Video ID is required")(res);
+    return error(statusCodes.BAD_REQUEST, 'Video ID is required')(res);
   }
   const video = await Video.aggregate([
     { $match: { _id: new mongoose.Types.ObjectId(videoId) } },
 
     {
       $lookup: {
-        from: "videometadatas",
-        localField: "video_metadata",
-        foreignField: "_id",
-        as: "video_metadata",
+        from: 'videometadatas',
+        localField: 'video_metadata',
+        foreignField: '_id',
+        as: 'video_metadata',
       },
     },
     {
       $lookup: {
-        from: "audiometadatas",
-        localField: "audio_metadata",
-        foreignField: "_id",
-        as: "audio_metadata",
+        from: 'audiometadatas',
+        localField: 'audio_metadata',
+        foreignField: '_id',
+        as: 'audio_metadata',
       },
     },
     {
       $lookup: {
-        from: "founders",
-        let: { founderId: "$uploaded_by_founder" },
+        from: 'founders',
+        let: { founderId: '$uploaded_by_founder' },
         pipeline: [
-          { $match: { $expr: { $eq: ["$_id", "$$founderId"] } } },
+          { $match: { $expr: { $eq: ['$_id', '$$founderId'] } } },
           { $project: { fullName: 1, email: 1, _id: 0 } },
         ],
-        as: "uploaded_by_founder",
+        as: 'uploaded_by_founder',
       },
     },
     {
       $lookup: {
-        from: "educators",
-        let: { educatorId: "$uploaded_by_educator" },
+        from: 'educators',
+        let: { educatorId: '$uploaded_by_educator' },
         pipeline: [
-          { $match: { $expr: { $eq: ["$_id", "$$educatorId"] } } },
+          { $match: { $expr: { $eq: ['$_id', '$$educatorId'] } } },
           { $project: { fullName: 1, email: 1, _id: 0 } },
         ],
-        as: "uploaded_by_educator",
+        as: 'uploaded_by_educator',
       },
     },
     {
       $addFields: {
-        uploaded_by_founder: { $arrayElemAt: ["$uploaded_by_founder", 0] },
-        uploaded_by_educator: { $arrayElemAt: ["$uploaded_by_educator", 0] },
-        video_metadata: { $arrayElemAt: ["$video_metadata", 0] },
-        audio_metadata: { $arrayElemAt: ["$audio_metadata", 0] },
+        uploaded_by_founder: { $arrayElemAt: ['$uploaded_by_founder', 0] },
+        uploaded_by_educator: { $arrayElemAt: ['$uploaded_by_educator', 0] },
+        video_metadata: { $arrayElemAt: ['$video_metadata', 0] },
+        audio_metadata: { $arrayElemAt: ['$audio_metadata', 0] },
       },
     },
   ]);
 
   if (!video) {
-    return error(statusCodes.NOT_FOUND, "Video not found")(res);
+    return error(statusCodes.NOT_FOUND, 'Video not found')(res);
   }
-  return success(statusCodes.OK, "Video fetched successfully", video)(res);
+  return success(statusCodes.OK, 'Video fetched successfully', video)(res);
 });
 
 export { uploadVideo, getSingleVideo };

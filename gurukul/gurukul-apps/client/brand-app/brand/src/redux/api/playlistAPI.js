@@ -95,3 +95,31 @@ export const getAllPlaylistOfBrand = createAsyncThunk(
     }
   }
 );
+
+export const getSinglePlaylist = createAsyncThunk(
+  'playlist/getSinglePlaylist',
+  async (
+    { dispatch, brandId, playlistId, source = 'brand' },
+    { rejectWithValue }
+  ) => {
+    try {
+      console.log(
+        'Get Single Playlist for Brand ID:',
+        brandId,
+        'Playlist ID:',
+        playlistId
+      );
+      const res = await apiClient(
+        dispatch,
+        `playlist/get-single-playlist/${brandId}/${playlistId}`,
+        'GET',
+        {},
+        source
+      );
+      return res;
+    } catch (error) {
+      console.log('Get Single Playlist error:', error);
+      return rejectWithValue(error.message);
+    }
+  }
+);

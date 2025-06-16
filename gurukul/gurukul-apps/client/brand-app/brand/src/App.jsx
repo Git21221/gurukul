@@ -19,6 +19,8 @@ import { SignUpEducator } from './components/signup/educator/SignUpEducator';
 import { EducatorHome } from './pages/educator/home/EducatorHome';
 import { UploadVideo } from './pages/educator/upload/UploadVideo';
 import { AllCourse } from './pages/educator/course/AllCourse';
+import { HomeUser } from './pages/user/home/HomeUser';
+import CourseDetail from './components/user/home/CourseDetail';
 
 function App() {
   const { isAuthenticated, userRole } = useSelector((state) => state.auth);
@@ -89,7 +91,8 @@ function App() {
             {/* for student routes */}
             <Route element={<UserRoute userRole={userRole} />}>
               <Route element={<DashboardLayout />}>
-                <Route path="/user/home" element={<div>user Home</div>} />
+                <Route path="/user/home" element={<HomeUser />} />
+                <Route path="/user/course/:id" element={<CourseDetail />} />
               </Route>
             </Route>
           </Route>

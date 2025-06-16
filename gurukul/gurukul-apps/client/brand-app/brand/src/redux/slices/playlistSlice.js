@@ -4,10 +4,12 @@ import {
   createPlaylist,
   deleteVideosFromPlayList,
   getAllPlaylistOfBrand,
+  getSinglePlaylist,
 } from '../api/playlistAPI';
 
 const initialState = {
   playlists: [],
+  singlePlaylist: null,
   loading: false,
   error: null,
 };
@@ -80,6 +82,19 @@ const playlistSlice = createSlice({
         state.playlists = action.payload.data;
       })
       .addCase(getAllPlaylistOfBrand.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getSinglePlaylist.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getSinglePlaylist.fulfilled, (state, action) => {
+        console.log('Single Playlist fetched:', action.payload.data);
+        state.loading = false;
+        state.singlePlaylist = action.payload.data;
+      })
+      .addCase(getSinglePlaylist.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
