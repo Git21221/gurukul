@@ -49,7 +49,7 @@ const loginFounder = asyncFuncHandler(async (req, res) => {
   }
   //cehck if founder created this brand
   const founderBrand = await Brand.findOne({
-    id: brandId,
+    _id: brandId,
     established_by: founder._id,
   });
   if (!founderBrand) {
