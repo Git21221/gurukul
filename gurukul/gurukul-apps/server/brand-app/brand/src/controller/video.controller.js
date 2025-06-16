@@ -43,10 +43,10 @@ const uploadVideo = asyncFuncHandler(async (req, res) => {
       'Unauthorized access, you are not associated with this brand'
     )(res);
   }
-  const BrandDetails = await Brand.findById(brandId, {
-    established_by: 1,
-    name: 1,
-  });
+  if (!mongoose.Types.ObjectId.isValid(brandId)) {
+    return error(statusCodes.BAD_REQUEST, 'Invalid brand ID')(res);
+  }
+  const BrandDetails = await Brand.findOne({ _id: brandId });
   if (!BrandDetails) {
     return error(statusCodes.NOT_FOUND, 'Brand not found')(res);
   }

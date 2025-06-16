@@ -20,7 +20,7 @@ const CourseDetail = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        await dispatch(
+        dispatch(
           getSinglePlaylist({
             dispatch,
             brandId: branding.brandId,
@@ -29,7 +29,7 @@ const CourseDetail = () => {
         );
       } catch (err) {
         console.error('Error fetching playlist:', err);
-        navigate('/user/home');
+        // navigate('/user/home');
       } finally {
         setLoading(false);
       }
@@ -54,7 +54,7 @@ const CourseDetail = () => {
   }
 
   if (!course || !course.videos || course.videos.length === 0) {
-    navigate('/user/home');
+    // navigate('/user/home');
     return null;
   }
 
